@@ -4,10 +4,9 @@ import { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { supabase } from '../lib/supabaseClient';
 
-
 const ConfirmPage = () => {
   const [status, setStatus] = useState('pendente');
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams(); // Certifique-se de que está no componente funcional
   const router = useRouter();
   const slug = searchParams.get('slug');
 
@@ -33,7 +32,6 @@ const ConfirmPage = () => {
       if (data) {
         setStatus(data.status);
 
-        // Se o status for "aprovado", redirecione para a página final
         if (data.status === 'aprovado') {
           console.log(`Status aprovado. Redirecionando para /${slug}`);
           router.push(`/${slug}`);
@@ -41,7 +39,7 @@ const ConfirmPage = () => {
       }
     };
 
-    const interval = setInterval(checkStatus, 5000); // Ajuste o tempo de verificação
+    const interval = setInterval(checkStatus, 5000);
     return () => clearInterval(interval);
   }, [slug, router]);
 
