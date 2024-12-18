@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { supabase } from '../lib/supabaseClient';
 
 const ConfirmPage = () => {
   const [status, setStatus] = useState('pendente');
-  const searchParams = useSearchParams(); // Certifique-se de que está no componente funcional
+  const searchParams = useSearchParams();
   const router = useRouter();
   const slug = searchParams.get('slug');
 
@@ -45,18 +45,6 @@ const ConfirmPage = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-200 via-blue-300 to-blue-400 bg-cover bg-center relative">
-      {/* Fundo com várias nuvens pequenas */}
-      <div className="absolute inset-0 z-0">
-        {/* Nuvens adicionais no canto superior esquerdo */}
-        <div className="absolute inset-0 bg-[url('/nuvem.png')] bg-no-repeat opacity-10" style={{ backgroundPosition: '5% 10%', backgroundSize: '140px' }}></div>
-        <div className="absolute inset-0 bg-[url('/nuvem.png')] bg-no-repeat opacity-12" style={{ backgroundPosition: '10% 20%', backgroundSize: '180px' }}></div>
-        <div className="absolute inset-0 bg-[url('/nuvem.png')] bg-no-repeat opacity-12" style={{ backgroundPosition: '30% 75%', backgroundSize: '160px' }}></div>
-        <div className="absolute inset-0 bg-[url('/nuvem.png')] bg-no-repeat opacity-12" style={{ backgroundPosition: '90% 90%', backgroundSize: '200px' }}></div>
-        <div className="absolute inset-0 bg-[url('/nuvem.png')] bg-no-repeat opacity-12" style={{ backgroundPosition: '60% 5%', backgroundSize: '170px' }}></div>
-        <div className="absolute inset-0 bg-[url('/nuvem.png')] bg-no-repeat opacity-12" style={{ backgroundPosition: '80% 30%', backgroundSize: '120px' }}></div>
-        {/* Outras nuvens mantidas */}
-      </div>
-
       <div className="relative z-10 max-w-2xl w-full mx-4 sm:mx-8 p-8 bg-white rounded-xl shadow-2xl">
         <h1 className="text-3xl font-semibold text-center text-gray-800 mb-6">Aguardando Confirmação de Pagamento</h1>
         <div className="text-center">
@@ -75,4 +63,10 @@ const ConfirmPage = () => {
   );
 };
 
-export default ConfirmPage;
+export default function ConfirmPageWithSuspense() {
+  return (
+    <Suspense fallback={<div>Carregando...</div>}>
+      <ConfirmPage />
+    </Suspense>
+  );
+}
