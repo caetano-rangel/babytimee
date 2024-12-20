@@ -149,16 +149,16 @@ const UserPage: React.FC<PageProps> = ({ params }) => {
       } else {
         console.error('Elemento de áudio não encontrado');
       }
-  
+
       document.removeEventListener('click', startAudio); // Remove o evento após tocar o áudio
     } else {
       console.log('O usuário não tem plano premium, áudio não tocado');
     }
   };
-  
+
   // Aguarda o clique para iniciar o áudio
   document.addEventListener('click', startAudio);
-  
+
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-[#295566] bg-cover bg-center"
@@ -187,7 +187,12 @@ const UserPage: React.FC<PageProps> = ({ params }) => {
       {userData && (
         <div className="text-center text-white p-8 max-w-3xl w-full rounded-xl">
           <h1
-            className="text-6xl font-semibold mb-6 uppercase tracking-wide bg-gradient-to-r from-amber-950 via-amber-600 to-amber-300 bg-clip-text text-transparent">
+            className="text-6xl font-semibold mb-6 uppercase tracking-wide bg-gradient-to-r from-amber-950 via-amber-600 to-amber-300 text-transparent"
+            style={{
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
             {userData.nomeBebe}
           </h1>
 
@@ -216,49 +221,63 @@ const UserPage: React.FC<PageProps> = ({ params }) => {
           </div>
 
           {timeElapsed && (
-          <div className="mt-16">
-            <h2 className="text-xl font-semibold text-center uppercase bg-gradient-to-r from-amber-800 via-amber-500 to-amber-300 bg-clip-text text-transparent mb-4">
-              Tempo desde o nascimento
-            </h2>
-            {/* Primeiro quadrado */}
-            <div className="flex flex-col items-center bg-gradient-to-r from-purple-900 to-black text-white p-6 rounded-lg border-4 border-amber-600 mb-4">
-              <div className="grid grid-cols-3 gap-11">
-                <div className="flex flex-col items-center">
-                  <span className="font-bold text-3xl">{timeElapsed.years}</span>
-                  <span className="text-gray-400">Anos</span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <span className="font-bold text-3xl">{timeElapsed.months}</span>
-                  <span className="text-gray-400">Meses</span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <span className="font-bold text-3xl">{timeElapsed.days}</span>
-                  <span className="text-gray-400">Dias</span>
+            <div className="mt-16">
+              <h2
+                className="text-xl font-semibold text-center uppercase bg-gradient-to-r from-amber-800 via-amber-500 to-amber-300 text-transparent mb-4"
+                style={{
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                }}
+              >
+                Tempo desde o nascimento
+              </h2>
+              {/* Primeiro quadrado */}
+              <div className="flex flex-col items-center bg-gradient-to-r from-purple-900 to-black text-white p-6 rounded-lg border-4 border-amber-600 mb-4">
+                <div className="grid grid-cols-3 gap-11">
+                  <div className="flex flex-col items-center">
+                    <span className="font-bold text-3xl">{timeElapsed.years}</span>
+                    <span className="text-gray-400">Anos</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <span className="font-bold text-3xl">{timeElapsed.months}</span>
+                    <span className="text-gray-400">Meses</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <span className="font-bold text-3xl">{timeElapsed.days}</span>
+                    <span className="text-gray-400">Dias</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Segundo quadrado */}
-            <div className="flex flex-col items-center bg-gradient-to-r from-purple-900 to-black text-white p-6 rounded-lg border-4 border-amber-600">
-              <div className="grid grid-cols-3 gap-8">
-                <div className="flex flex-col items-center">
-                  <span className="font-bold text-3xl">{timeElapsed.hours}</span>
-                  <span className="text-gray-400">Horas</span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <span className="font-bold text-3xl">{timeElapsed.minutes}</span>
-                  <span className="text-gray-400">Minutos</span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <span className="font-bold text-3xl">{timeElapsed.seconds}</span>
-                  <span className="text-gray-400">Segundos</span>
+              {/* Segundo quadrado */}
+              <div className="flex flex-col items-center bg-gradient-to-r from-purple-900 to-black text-white p-6 rounded-lg border-4 border-amber-600">
+                <div className="grid grid-cols-3 gap-8">
+                  <div className="flex flex-col items-center">
+                    <span className="font-bold text-3xl">{timeElapsed.hours}</span>
+                    <span className="text-gray-400">Horas</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <span className="font-bold text-3xl">{timeElapsed.minutes}</span>
+                    <span className="text-gray-400">Minutos</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <span className="font-bold text-3xl">{timeElapsed.seconds}</span>
+                    <span className="text-gray-400">Segundos</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
           )}
 
-          <p className="text-xl bg-gradient-to-r from-amber-600 via-amber-400 to-amber-100 bg-clip-text text-transparent mb-4 font-semibold mt-16 capitalize">Mensagem de: {userData.nomePais}</p>
+          <p
+            className="text-xl bg-gradient-to-r from-amber-600 via-amber-400 to-amber-100 text-transparent mb-4 font-semibold mt-16 capitalize"
+            style={{
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
+            Mensagem de: {userData.nomePais}
+          </p>
 
           <div className="mt-4 text-lg border-2 g-white bg-white bg-opacity-40 rounded-lg border-white p-4 text-black italic max-w-md mx-auto">
             {userData.mensagem}

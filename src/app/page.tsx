@@ -53,14 +53,26 @@ const Home: React.FC = () => {
           alt="BabyTimee Logo"
           className="h-12 w-12 object-contain mr-1"
         />
-        <h1 className="text-2xl up font-bold bg-gradient-to-r from-orange-600 via-orange-400 to-orange-200 bg-clip-text text-transparent">
+        <h1
+          className="text-2xl up font-bold bg-gradient-to-r from-orange-600 via-orange-400 to-orange-200 text-transparent"
+          style={{
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}
+        >
           BabyTimee
         </h1>
       </div>
 
       {/* Header */}
       <header className="py-8 text-center z-10 relative">
-        <h1 className="text-5xl mb-8 text-left ml-6 font-bold bg-gradient-to-r from-amber-900 via-amber-700 to-amber-200 bg-clip-text text-transparent">
+        <h1
+          className="text-5xl mb-8 text-left ml-6 font-bold bg-gradient-to-r from-amber-900 via-amber-700 to-amber-200 text-transparent"
+          style={{
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}
+        >
           Crie Memórias Inesquecíveis!
         </h1>
         <p className="mt-4 text-left font-thin mb-4 ml-6 text-xl">
