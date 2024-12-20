@@ -173,7 +173,7 @@ const Form = () => {
           onClick={() => handlePlanoChange('sempre')}
           className={`flex-1 p-3 font-semibold rounded-r-lg ${formData.plano === 'sempre' ? 'bg-gradient-to-r from-orange-600 to-orange-300 text-black' : 'bg-white text-black'} border border-l-0 border-gray-300`}
         >
-          Para sempre, 20 fotos - R$49
+          Para sempre, 20 fotos, com música - R$59
         </button>
       </div>
 

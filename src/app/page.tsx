@@ -222,7 +222,7 @@ const Home: React.FC = () => {
           transition={{ duration: 0.8 }}
         >
           <h3 className="text-lg mt-2 text-left pl-5">Premium</h3>
-          <p className="text-4xl font-bold mt-1 text-gray-700 border-b-2 border-orange-500 pb-4 text-left pl-5 mb-6">R$49</p>
+          <p className="text-4xl font-bold mt-1 text-gray-700 border-b-2 border-orange-500 pb-4 text-left pl-5 mb-6">R$59</p>
           <ul className="mt-4 space-y-2 text-left">
             <li>
               <svg className="h-5 w-5 text-green-500 inline mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
