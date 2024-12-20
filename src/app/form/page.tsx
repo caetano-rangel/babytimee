@@ -149,9 +149,15 @@ const Form = () => {
         opacity: 0.8, // Leve transparência para as nuvens
       }}
     >
-      <h1 className="text-4xl font-semibold text-center mb-8 bg-gradient-to-r from-orange-600 via-orange-400 to-orange-200 bg-clip-text text-transparent sm:pt-2">
-        Transforme Memórias em um Site Incrível:<br></br>Comece Aqui!
-      </h1>
+        <h1
+            className="text-4xl font-semibold text-center mb-8 bg-gradient-to-r from-orange-600 via-orange-400 to-orange-200 text-transparent sm:pt-2"
+            style={{
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+            }}
+            >
+            Transforme Memórias em um Site Incrível:<br />Comece Aqui!
+        </h1>
 
       {/* Opções de plano */}
       <div className="flex justify-center mb-6 w-full max-w-lg shadow-2xl">
@@ -225,7 +231,7 @@ const Form = () => {
           value={formData.dataNascimento}
           onChange={handleChange}
           required
-          className={`w-full p-3 mt-2 bg-white shadow-2xl text-black rounded-lg ${fieldErrors.dataNascimento ? 'border-2 border-red-500' : ''}`}
+          className={`w-full p-3 mt-2 bg-white shadow-2xl text-black rounded-lg appearance-none ${fieldErrors.dataNascimento ? 'border-2 border-red-500' : ''}`}
         />
         {fieldErrors.dataNascimento && <p className="text-red-500 text-sm">{fieldErrors.dataNascimento}</p>}
       </label>
@@ -239,7 +245,7 @@ const Form = () => {
           value={formData.horaNascimento}
           onChange={handleChange}
           required
-          className={`w-full p-3 mt-2 bg-white shadow-2xl text-black rounded-lg ${fieldErrors.horaNascimento ? 'border-2 border-red-500' : ''}`}
+          className={`w-full p-3 mt-2 bg-white shadow-2xl text-black rounded-lg appearance-none ${fieldErrors.horaNascimento ? 'border-2 border-red-500' : ''}`}
         />
         {fieldErrors.horaNascimento && <p className="text-red-500 text-sm">{fieldErrors.horaNascimento}</p>}
       </label>

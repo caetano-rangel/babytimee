@@ -16,7 +16,7 @@ const Terms: React.FC = () => {
           <p className="mb-4">
             Nossa plataforma permite que casais criem uma página personalizada preenchendo um
             formulário com seu nome, data de início do relacionamento, uma mensagem personalizada e
-            até 7 fotos. Após o preenchimento, o casal é direcionado para o checkout e, ao concluir o
+            até 20 fotos. Após o preenchimento, o casal é direcionado para o checkout e, ao concluir o
             pagamento, recebe um link com um QR Code via email.
           </p>
   

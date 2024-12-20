@@ -233,7 +233,7 @@ const Home: React.FC = () => {
           </ul>
           <button onClick={handleClick} className="text-lg mt-6 bg-gradient-to-r from-orange-500 to-orange-300 text-white px-8 py-2 rounded-md shadow-lg shadow-orange-600/60 transition-all duration-300 hover:shadow-xl hover:shadow-orange-500/70">Quero fazer meu site!</button>
 
-          <div className="absolute top-[-15px] left-1/2 transform -translate-x-1/2 text-center w-8/12 bg-gradient-to-r from-orange-500 to-orange-300 text-black uppercase font-semibold text-sm py-1 px-4 rounded-full">
+          <div className="absolute top-[-15px] left-1/2 transform -translate-x-1/2 text-center w-8/12 bg-gradient-to-r from-orange-500 to-orange-300 text-gray-700 uppercase font-semibold text-sm py-1 px-4 rounded-full">
             <p>mais escolhido!</p>
           </div>
         </motion.div>
