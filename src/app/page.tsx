@@ -1,340 +1,355 @@
 "use client"
-import { useEffect, useState } from 'react';
+import { useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
+
+const fadeUp = (delay = 0) => ({
+  hidden: { opacity: 0, y: 36 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1], delay } },
+});
+const fadeLeft = (delay = 0) => ({
+  hidden: { opacity: 0, x: -40 },
+  show: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1], delay } },
+});
+const fadeRight = (delay = 0) => ({
+  hidden: { opacity: 0, x: 40 },
+  show: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1], delay } },
+});
+
+/* ── QR pattern ── */
+const QR_PATTERN = [
+  1,1,1,1,1,1,1,0, 1,0,0,0,0,0,1,0,
+  1,0,1,1,1,0,1,0, 1,0,1,0,1,0,1,0,
+  1,0,1,1,1,0,1,0, 1,0,0,0,0,0,1,0,
+  1,1,1,1,1,1,1,0, 0,1,0,1,0,1,0,1,
+];
+
+function PhoneMock() {
+  return (
+    <div style={{
+      background: '#1a0f1e', borderRadius: 36, padding: '10px 7px', width: 200,
+      boxShadow: '0 32px 72px rgba(45,27,46,0.35), 0 0 0 1px #3d2545',
+    }}>
+      <div style={{
+        background: 'linear-gradient(160deg,#fff5f8,#f0f7ff,#f5f0ff)',
+        borderRadius: 28, padding: 14, minHeight: 340,
+        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
+      }}>
+        <div style={{
+          width: 52, height: 52,
+          background: 'linear-gradient(135deg,#fce4ef,#bfdbfe)',
+          borderRadius: '50%', display: 'flex', alignItems: 'center',
+          justifyContent: 'center', fontSize: 26,
+          boxShadow: '0 6px 18px rgba(191,219,254,0.5)',
+        }}>👶</div>
+        <div style={{ fontFamily:"'Playfair Display',serif", color:'#6b7fa3', fontWeight:700, fontSize:'1rem' }}>Sofia ✨</div>
+        <div style={{ fontSize:'0.64rem', color:'#6b5c6e', textAlign:'center' }}>Nasceu em 12/03/2024</div>
+        <div style={{
+          background: 'linear-gradient(135deg,#f0f7ff,#dbeafe)',
+          borderRadius: 14, padding:'8px 14px', textAlign:'center',
+          border:'1px solid #bfdbfe', width:'100%',
+        }}>
+          <div style={{ fontSize:'0.6rem', color:'#6b7fa3' }}>Ela tem</div>
+          <div style={{ fontFamily:"'Playfair Display',serif", fontSize:'1.2rem', color:'#3b82f6', fontWeight:700 }}>1a 2m 18d</div>
+          <div style={{ fontSize:'0.6rem', color:'#6b7fa3' }}>de vida 💗</div>
+        </div>
+        <div style={{ background:'#fdf4ff', borderRadius:10, padding:'7px 10px', width:'100%', fontSize:'0.62rem', color:'#7c6b8a', textAlign:'center', fontStyle:'italic' }}>
+          "Você é nossa maior alegria!"
+        </div>
+        <div style={{ background:'white', borderRadius:10, padding:6, border:'1px solid #e0e7ff' }}>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(8,1fr)', gap:1.5 }}>
+            {QR_PATTERN.map((v,i) => (
+              <div key={i} style={{ width:5, height:5, borderRadius:1, background: v ? '#2d1b2e' : 'transparent' }} />
+            ))}
+          </div>
+          <div style={{ fontSize:'0.58rem', color:'#a08898', marginTop:2, textAlign:'center' }}>QR Code exclusivo</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StepCard({ emoji, num, title, desc, delay }: {
+  emoji: string; num: string; title: string; desc: string; delay: number;
+}) {
+  return (
+    <motion.div
+      variants={fadeUp(delay)} initial="hidden" whileInView="show" viewport={{ once: true, margin:'-60px' }}
+      whileHover={{ y:-6, transition:{ duration:0.3 } }}
+      style={{
+        background:'white', borderRadius:22, padding:'28px 22px', textAlign:'center',
+        border:'1.5px solid #e0eeff',
+        boxShadow:'0 4px 24px rgba(191,219,254,0.15)',
+      }}
+    >
+      <div style={{ fontSize:40, marginBottom:10 }}>{emoji}</div>
+      <div style={{
+        width:26, height:26,
+        background:'linear-gradient(135deg,#dbeafe,#fce4ef)',
+        borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center',
+        margin:'0 auto 10px', fontSize:'0.78rem', fontWeight:700, color:'#3b82f6',
+      }}>{num}</div>
+      <h3 style={{ fontSize:'0.95rem', fontWeight:700, color:'#2d1b2e', marginBottom:6 }}>{title}</h3>
+      <p style={{ fontSize:'0.84rem', color:'#6b5c6e', lineHeight:1.6 }}>{desc}</p>
+    </motion.div>
+  );
+}
+
+function TestiCard({ quote, name, role, delay }: {
+  quote: string; name: string; role: string; delay: number;
+}) {
+  return (
+    <motion.div
+      variants={fadeUp(delay)} initial="hidden" whileInView="show" viewport={{ once:true, margin:'-60px' }}
+      whileHover={{ y:-6, transition:{ duration:0.3 } }}
+      style={{
+        background:'white', borderRadius:22, padding:'28px 22px',
+        border:'1.5px solid #e0eeff',
+        boxShadow:'0 4px 24px rgba(191,219,254,0.12)',
+        flex:'1 1 230px', maxWidth:300,
+      }}
+    >
+      <div style={{ color:'#93c5fd', fontSize:'0.9rem', marginBottom:12 }}>★★★★★</div>
+      <p style={{ fontSize:'0.92rem', color:'#4a3550', lineHeight:1.65, fontStyle:'italic', marginBottom:18 }}>{quote}</p>
+      <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+        <div style={{
+          width:36, height:36, flexShrink:0,
+          background:'linear-gradient(135deg,#dbeafe,#bfdbfe)',
+          borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:17,
+        }}>👩</div>
+        <div>
+          <div style={{ fontWeight:700, color:'#2d1b2e', fontSize:'0.88rem' }}>{name}</div>
+          <div style={{ color:'#a08898', fontSize:'0.76rem' }}>{role}</div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
 const Home: React.FC = () => {
   const router = useRouter();
-  const [scrollY, setScrollY] = useState(0);
+  const go = (path: string) => () => router.push(path);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start','end start'] });
+  const heroY = useTransform(scrollYProgress, [0,1], ['0%','20%']);
 
-  const handleClick = () => {
-    router.push('/form');
+  const btnStyle: React.CSSProperties = {
+    display:'inline-block',
+    background:'linear-gradient(135deg,#93c5fd,#60a5fa,#3b82f6)',
+    color:'white', border:'none', padding:'14px 36px', borderRadius:50,
+    fontSize:'1rem', fontWeight:700, cursor:'pointer',
+    boxShadow:'0 8px 24px rgba(96,165,250,0.4)',
+    fontFamily:"'Nunito',sans-serif", transition:'transform 0.3s, box-shadow 0.3s',
   };
-
-  const handleTermsClick = () => {
-    router.push('/terms');
-  };
-
-  const handlePrivacyClick = () => {
-    router.push('/privacy');
-  };
-
-  // Atualiza o scrollY ao rolar a página
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
 
   return (
-    <div
-      className="min-h-screen text-white flex flex-col items-center relative"
-      style={{
-        backgroundImage: "url('/wallp2.jpg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundAttachment: "fixed",
-      }}
-    >
-      {/* Overlay para escurecer o fundo */}
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm z-0"></div>
+    <div style={{ fontFamily:"'Nunito',sans-serif", background:'#f7fbff', color:'#2d1b2e', overflowX:'hidden' }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Nunito:wght@300;400;600;700&display=swap');
+        .pf { font-family: 'Playfair Display', Georgia, serif !important; }
+        .btn-blue:hover  { transform:translateY(-3px); box-shadow:0 14px 36px rgba(96,165,250,0.55) !important; }
+        .btn-pink:hover  { transform:translateY(-3px); box-shadow:0 14px 36px rgba(232,121,160,0.55) !important; }
+      `}</style>
 
-      {/* Nome e logo do SaaS */}
-      <div className="w-full flex items-center justify-center pt-4 pb-2 z-10 relative">
-        <img
-          src="/chupeta.png"
-          alt="BabyTimee Logo"
-          className="h-12 w-12 object-contain mr-1"
-        />
-        <h1
-          className="text-2xl up font-bold bg-gradient-to-r from-orange-600 via-orange-400 to-orange-200 text-transparent"
-          style={{
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}
-        >
-          BabyTimee
-        </h1>
-      </div>
-
-      {/* Header */}
-      <header className="py-8 text-center z-10 relative">
-        <h1
-          className="text-5xl mb-8 text-left ml-6 font-bold bg-gradient-to-r from-amber-900 via-amber-700 to-amber-200 text-transparent"
-          style={{
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}
-        >
-          Crie Memórias Inesquecíveis!
-        </h1>
-        <p className="mt-4 text-left font-thin mb-4 ml-6 text-xl">
-          Transforme momentos únicos em uma página personalizada!
-          <br />
-          Com fotos e um{" "}
-          <span className="text-amber-700 font-semibold">QR Code</span>, que
-          torna o acesso à página fácil e especial.
-        </p>
-
-        <button
-          onClick={handleClick}
-          className="mt-6 w-9/12 bg-gradient-to-r from-amber-900 to-amber-300 font-semibold text-xl px-4 py-3 rounded-md border-2 text-white 
-          transition-all duration-300 shadow-lg shadow-orange-600/60 hover:shadow-2xl hover:shadow-orange-500/70"
-        >
-          Quero fazer meu site
+      {/* ── NAV ── */}
+      <nav style={{
+        background:'rgba(247,251,255,0.95)', backdropFilter:'blur(14px)',
+        borderBottom:'1px solid #dbeafe',
+        padding:'14px 32px', display:'flex', alignItems:'center', justifyContent:'space-between',
+        position:'sticky', top:0, zIndex:100,
+      }}>
+        <div style={{ display:'flex', alignItems:'center', gap:9 }}>
+          <img src="/chupeta.png" alt="BabyTimee" style={{ width:30, height:30, objectFit:'contain' }} />
+          <span className="pf" style={{ fontSize:'1.35rem', fontWeight:700, background:'linear-gradient(90deg,#60a5fa,#e879a0)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>BabyTimee</span>
+        </div>
+        <button onClick={go('/form')} className="btn-blue" style={{ ...btnStyle, padding:'10px 22px', fontSize:'0.88rem' }}>
+          Criar meu site
         </button>
-      </header>
+      </nav>
 
-      {/* Adicionar imagem abaixo do botão */}
-      <motion.div
-        className="mt-6 z-10 relative"
-        initial={{ opacity: 0, y: 150 }} // Inicializa com opacidade 0 e deslocamento vertical
-        whileInView={{ opacity: 1, y: 0 }} // Anima para opacidade 1 e posição original
-        transition={{ duration: 0.5 }} // Define o tempo da animação
-      >
-        <Image src="/qr.png" alt="Imagem do site" width={500} height={400} className="rounded-lg" />
-      </motion.div>
+      {/* ── HERO ── */}
+      <section ref={heroRef} style={{
+        background:'linear-gradient(155deg,#f0f7ff 0%,#e0eeff 30%,#fce4ef 70%,#fff5f8 100%)',
+        padding:'80px 24px 64px', position:'relative', overflow:'hidden',
+      }}>
+        <div style={{ position:'absolute', top:-80, right:-80, width:340, height:340, background:'radial-gradient(circle,rgba(191,219,254,0.35),transparent 70%)', borderRadius:'50%', pointerEvents:'none' }} />
+        <div style={{ position:'absolute', bottom:-60, left:-60, width:260, height:260, background:'radial-gradient(circle,rgba(249,168,201,0.25),transparent 70%)', borderRadius:'50%', pointerEvents:'none' }} />
+        <div style={{ position:'absolute', top:'40%', left:'50%', width:200, height:200, background:'radial-gradient(circle,rgba(196,181,253,0.2),transparent 70%)', borderRadius:'50%', pointerEvents:'none', transform:'translate(-50%,-50%)' }} />
 
-      {/* Seção "Como Funciona" */}
-      <section className="mt-12 px-6 text-center z-10 relative">
-      <h2 className="text-4xl font-bold mb-5">Como Funciona?</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Etapa 1 */}
-        <motion.div
-          className="border-2 border-gray-300 p-5 rounded-lg text-white bg-gradient-to-t from-amber-950 via-slate-900 to-black"
-          initial={{ opacity: 0, x: -100 }}
-          whileInView={{ opacity: 1, x: 0 }} // Animação quando entra na visão
-          transition={{ duration: 0.8 }}
-        >
-          <p className="font-semibold text-2xl mb-4">1. Preencha os dados</p>
-          <Image
-            src="/form.jpeg"
-            alt="Preencha os dados"
-            width={210}
-            height={190}
-            style={{ transform: "perspective(1000px) rotateX(25deg)" }}
-            className="mx-auto rounded-md"
-          />
-        </motion.div>
+        <div style={{ maxWidth:980, margin:'0 auto', display:'flex', flexWrap:'wrap', alignItems:'center', gap:48, justifyContent:'center', position:'relative', zIndex:1 }}>
 
-        {/* Etapa 2 */}
-        <motion.div
-          className="border-2 border-gray-300 p-5 rounded-lg text-white bg-gradient-to-t from-amber-950 via-slate-900 to-black"
-          initial={{ opacity: 0, x: -100 }}
-          whileInView={{ opacity: 1, x: 0 }} // Animação quando entra na visão
-          transition={{ duration: 0.8 }}
-        >
-          <p className="font-semibold text-2xl mb-9">2. Faça o pagamento</p>
-          <Image
-            src="/moeda.png"
-            alt="Faça o pagamento"
-            width={190}
-            height={180}
-            className="mx-auto"
-          />
-        </motion.div>
+          <motion.div variants={fadeLeft(0)} initial="hidden" animate="show" style={{ flex:'1 1 320px', maxWidth:500 }}>
+            <span style={{
+              display:'inline-block',
+              background:'linear-gradient(135deg,#dbeafe,#fce4ef)',
+              borderRadius:50, padding:'5px 18px',
+              fontSize:'0.82rem', color:'#3b82f6', fontWeight:700, marginBottom:18,
+            }}>✨ Para meninos e meninas</span>
 
-        {/* Etapa 3 */}
-        <motion.div
-          className="border-2 border-gray-300 p-5 rounded-lg text-white bg-gradient-to-t from-amber-950 via-slate-900 to-black"
-          initial={{ opacity: 0, x: -200 }}
-          whileInView={{ opacity: 1, x: 0 }} // Animação quando entra na visão
-          transition={{ duration: 0.8 }}
-        >
-          <p className="font-semibold text-2xl mb-4 md:mb-14">3. Receba o QR Code</p>
-          <Image
-            src="/exemplo.png"
-            alt="Receba o QR Code"
-            width={190}
-            height={180}
-            className="mx-auto rounded-md"
-          />
-        </motion.div>
+            <h1 className="pf" style={{ fontSize:'clamp(2rem,5vw,3.1rem)', fontWeight:700, lineHeight:1.22, marginBottom:18 }}>
+              Crie Memórias{' '}
+              <em style={{ color:'#e879a0', fontStyle:'italic' }}>Inesquecíveis</em>
+              {' '}do seu Bebê
+            </h1>
 
-        {/* Etapa 4 */}
-        <motion.div
-          className="border-2 border-gray-300 p-5 rounded-lg text-white bg-gradient-to-t from-amber-950 via-slate-900 to-black"
-          initial={{ opacity: 0, x: -200 }}
-          whileInView={{ opacity: 1, x: 0 }} // Animação quando entra na visão
-          transition={{ duration: 0.8 }}
-        >
-          <p className="font-semibold text-2xl mb-4">4. Faça uma surpresa!</p>
-          <Image
-            src="/result.png"
-            alt="Compartilhe a página"
-            width={220}
-            height={200}
-            className="mx-auto"
-          />
-        </motion.div>
-      </div>
-    </section>
+            <p style={{ fontSize:'1.05rem', color:'#6b5c6e', lineHeight:1.75, marginBottom:32 }}>
+              Transforme os primeiros momentos em uma página personalizada com fotos, contador de vida e um{' '}
+              <strong style={{ color:'#3b82f6' }}>QR Code</strong> para presentear sua família.
+            </p>
 
-
-      {/* Seção de Preços */}
-      <section className="mt-16 px-6 text-center z-10 relative">
-      <h2 className="text-3xl font-semibold mb-8">Preços</h2>
-      <div className="flex flex-wrap justify-center gap-12">
-        {/* Plano Básico */}
-        <motion.div
-          className="bg-white p-6 rounded-lg text-gray-700 w-10/12 md:w-[450px] relative"
-          initial={{ opacity: 0, y: 150 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <h3 className="text-lg mt-2 text-left pl-5">Básico</h3>
-          <p className="text-4xl font-bold mt-1 text-gray-700 border-b-2 border-orange-500 pb-4 text-left pl-5 mb-6">R$29</p>
-          <ul className="mt-4 space-y-2 text-left">
-            <li>
-              <svg className="h-5 w-5 text-green-500 inline mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 11.586 4.707 8.293a1 1 0 10-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clipRule="evenodd" />
-              </svg>
-              1 ano de acesso
-            </li>
-            <li>
-              <svg className="h-5 w-5 text-green-500 inline mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 11.586 4.707 8.293a1 1 0 10-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clipRule="evenodd" />
-              </svg>
-              Até 10 fotos
-            </li>
-            <li>
-              <svg className="h-5 w-5 text-red-500 inline mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 7.586l4.293-4.293a1 1 0 111.414 1.414L11.414 9l4.293 4.293a1 1 0 11-1.414 1.414L10 10.414l-4.293 4.293a1 1 0 11-1.414-1.414L8.586 9 4.293 4.707a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-              Sem música
-            </li>
-          </ul>
-          <button onClick={handleClick} className="text-lg mt-6 bg-gradient-to-r from-orange-500 to-orange-300 text-white px-8 py-2 rounded-md shadow-lg shadow-orange-600/60 transition-all duration-300 hover:shadow-xl hover:shadow-orange-700/60">Quero fazer meu site!</button>
-        </motion.div>
-
-        {/* Plano Premium */}
-        <motion.div
-          className="bg-white p-6 rounded-lg text-gray-700 w-10/12 md:w-[450px] relative border-4 border-orange-500"
-          initial={{ opacity: 0, y: 150 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <h3 className="text-lg mt-2 text-left pl-5">Premium</h3>
-          <p className="text-4xl font-bold mt-1 text-gray-700 border-b-2 border-orange-500 pb-4 text-left pl-5 mb-6">R$59</p>
-          <ul className="mt-4 space-y-2 text-left">
-            <li>
-              <svg className="h-5 w-5 text-green-500 inline mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 11.586 4.707 8.293a1 1 0 10-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clipRule="evenodd" />
-              </svg>
-              Acesso Ilimitado
-            </li>
-            <li>
-              <svg className="h-5 w-5 text-green-500 inline mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 11.586 4.707 8.293a1 1 0 10-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clipRule="evenodd" />
-              </svg>
-              Até 20 fotos
-            </li>
-            <li>
-              <svg className="h-5 w-5 text-green-500 inline mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 11.586 4.707 8.293a1 1 0 10-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clipRule="evenodd" />
-              </svg>
-              Com música
-            </li>
-          </ul>
-          <button onClick={handleClick} className="text-lg mt-6 bg-gradient-to-r from-orange-500 to-orange-300 text-white px-8 py-2 rounded-md shadow-lg shadow-orange-600/60 transition-all duration-300 hover:shadow-xl hover:shadow-orange-500/70">Quero fazer meu site!</button>
-
-          <div className="absolute top-[-15px] left-1/2 transform -translate-x-1/2 text-center w-8/12 bg-gradient-to-r from-orange-500 to-orange-300 text-gray-700 uppercase font-semibold text-sm py-1 px-4 rounded-full">
-            <p>mais escolhido!</p>
-          </div>
-        </motion.div>
-      </div>
-    </section>
-
-
-      {/* Seção de Depoimentos */}
-      <section className="mt-16 px-6 text-center z-10 relative">
-        <h2 className="text-3xl font-semibold mb-6">Depoimentos</h2>
-        <div className="flex flex-col md:flex-row justify-center gap-6">
-          <motion.div
-            initial={{ opacity: 0, y: 150 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="bg-white p-4 rounded-lg w-72 text-gray-700"
-          >
-            <Image src="/bitcoin.jpg" alt="Depoimento" width={288} height={512} className="rounded-lg"/>
-            <p className="mt-4">"Uma surpresa incrível para guardar para sempre!"</p>
+            <div style={{ display:'flex', flexWrap:'wrap', gap:12, marginBottom:12 }}>
+              <button onClick={go('/form')} className="btn-blue" style={{ ...btnStyle, fontSize:'1.05rem', padding:'15px 32px' }}>
+                É um menino 💙
+              </button>
+              <button onClick={go('/form')} className="btn-pink" style={{
+                ...btnStyle,
+                background:'linear-gradient(135deg,#f9a8c9,#e879a0,#d1598c)',
+                boxShadow:'0 8px 24px rgba(232,121,160,0.4)',
+                fontSize:'1.05rem', padding:'15px 32px',
+              }}>
+                É uma menina 💗
+              </button>
+            </div>
+            <p style={{ fontSize:'0.82rem', color:'#a08898' }}>Pronto em menos de 5 minutos · Sem complicação</p>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 150 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="bg-white p-4 rounded-lg w-72 text-gray-700"
-          >
-            <Image src="/bitcoin.jpg" alt="Depoimento" width={288} height={512} className="rounded-lg"/>
-            <p className="mt-4">"Adoramos o resultado, emocionante!"</p>
+          <motion.div variants={fadeRight(0.15)} initial="hidden" animate="show" style={{ flexShrink:0 }}>
+            <motion.div style={{ y: heroY }}>
+              <PhoneMock />
+            </motion.div>
           </motion.div>
         </div>
       </section>
 
-      <motion.div
-      className="z-10 relative mt-16 mb-6 flex flex-col lg:flex-row items-center justify-center text-white p-6 rounded-lg space-y-6 lg:space-y-0 lg:space-x-8 border-[0.5px] border-orange-700 w-10/12"
-      initial={{ x: -150, opacity: 0 }} // Começa à esquerda e invisível
-      whileInView={{ x: 0, opacity: 1 }} // Move para a posição original e fica visível
-      transition={{ duration: 0.7 }} // Controla a duração da animação
-      >
-      {/* QR Code com efeito de brilho */}
-      <div className="relative">
-        <div className="absolute -inset-0.5 bg-gradient-to-r from-orange-600 via-orange-400 to-orange-200 rounded-lg blur-md opacity-70"></div>
-        <img
-          src="/exemplo.png"
-          alt="QR Code"
-          className="relative w-48 h-48 rounded-lg"
-        />
-      </div>
+      {/* ── HOW IT WORKS ── */}
+      <section style={{ padding:'80px 24px', background:'#f7fbff' }}>
+        <div style={{ maxWidth:880, margin:'0 auto' }}>
+          <motion.div variants={fadeUp(0)} initial="hidden" whileInView="show" viewport={{ once:true }} style={{ textAlign:'center', marginBottom:48 }}>
+            <span style={{ display:'inline-block', background:'linear-gradient(135deg,#dbeafe,#fce4ef)', borderRadius:50, padding:'5px 18px', fontSize:'0.82rem', color:'#3b82f6', fontWeight:700, marginBottom:14 }}>🪄 Simples assim</span>
+            <h2 className="pf" style={{ fontSize:'2rem', color:'#2d1b2e', fontWeight:700 }}>Como Funciona?</h2>
+          </motion.div>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(185px,1fr))', gap:18 }}>
+            <StepCard emoji="📋" num="1" title="Preencha os dados"  desc="Nome, data, sexo do bebê e as fotos mais lindas."         delay={0}   />
+            <StepCard emoji="💳" num="2" title="Faça o pagamento"   desc="Seguro e instantâneo via cartão ou Pix."                   delay={0.1} />
+            <StepCard emoji="🎁" num="3" title="Receba o QR Code"   desc="Um QR Code exclusivo para acessar a página do bebê."      delay={0.2} />
+            <StepCard emoji="🥰" num="4" title="Faça uma surpresa!" desc="Imprima e presenteie sua família com esse momento único."  delay={0.3} />
+          </div>
+        </div>
+      </section>
 
-      {/* Texto e botão */}
-      <div className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-4">
-        <h1 className="text-2xl font-bold">
-          Vamos fazer um presente surpresa para sua familia?
-        </h1>
-        <p className="text-sm text-gray-400">
-          Demora menos de 5 minutos. É sério!
-        </p>
-        <button
-          onClick={handleClick}
-          className="text-lg mt-6 bg-gradient-to-r from-orange-500 to-orange-300 text-white px-8 py-2 rounded-md shadow-lg shadow-orange-600/60 transition-all duration-300 hover:shadow-xl hover:shadow-orange-500/50"
-        >
-          Quero fazer meu site
-        </button>
-      </div>
-    </motion.div>
-      
-      <hr className="mt-16 w-full border-gray-700 " />
+      {/* ── PRICING ── */}
+      <section style={{ padding:'80px 24px', background:'linear-gradient(155deg,#f0f7ff,#fce4ef30)' }}>
+        <div style={{ maxWidth:820, margin:'0 auto' }}>
+          <motion.div variants={fadeUp(0)} initial="hidden" whileInView="show" viewport={{ once:true }} style={{ textAlign:'center', marginBottom:48 }}>
+            <span style={{ display:'inline-block', background:'linear-gradient(135deg,#dbeafe,#fce4ef)', borderRadius:50, padding:'5px 18px', fontSize:'0.82rem', color:'#3b82f6', fontWeight:700, marginBottom:14 }}>💰 Investimento único</span>
+            <h2 className="pf" style={{ fontSize:'2rem', color:'#2d1b2e', fontWeight:700 }}>Escolha seu Plano</h2>
+            <p style={{ color:'#6b5c6e', marginTop:8, fontSize:'0.95rem' }}>Memória para seus primeiros anos</p>
+          </motion.div>
 
-      {/* Footer */}
-      <footer className="z-10 relative mt py-6 text-gray-400 text-center">
-        {/* Logo e descrição */}
-        <div className="mb-3">
-          <img src="/chupeta.png" width={80} height={100} alt="Logo" className="mx-auto mb-2 h-18" />
-          <p className="text-base text-white">
-            Surpreenda sua familia com esse presente incrivel!
+          <div style={{ display:'flex', flexWrap:'wrap', gap:24, justifyContent:'center' }}>
+            {/* Básico */}
+            <motion.div variants={fadeUp(0)} initial="hidden" whileInView="show" viewport={{ once:true }}
+              whileHover={{ y:-6, transition:{ duration:0.3 } }}
+              style={{ flex:'1 1 280px', maxWidth:340 }}>
+              <div style={{ background:'white', borderRadius:22, padding:'28px 22px', border:'1.5px solid #dbeafe', boxShadow:'0 4px 24px rgba(191,219,254,0.15)' }}>
+                <p style={{ fontSize:'0.8rem', color:'#93c5fd', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.07em', marginBottom:6 }}>Básico</p>
+                <p className="pf" style={{ fontSize:'2.8rem', fontWeight:700, color:'#2d1b2e' }}>R$29</p>
+                <div style={{ height:2, borderRadius:2, margin:'14px 0 20px', background:'linear-gradient(90deg,#dbeafe,#bfdbfe)' }} />
+                <ul style={{ listStyle:'none', display:'flex', flexDirection:'column', gap:12 }}>
+                  <li style={{ fontSize:'0.93rem', display:'flex', alignItems:'center', gap:6, color:'#374151' }}><span style={{ color:'#4ade80' }}>✓</span> 1 ano de acesso</li>
+                  <li style={{ fontSize:'0.93rem', display:'flex', alignItems:'center', gap:6, color:'#374151' }}><span style={{ color:'#4ade80' }}>✓</span> Até 10 fotos</li>
+                  <li style={{ fontSize:'0.93rem', display:'flex', alignItems:'center', gap:6, color:'#9ca3af' }}><span style={{ color:'#f87171' }}>✕</span> Sem música</li>
+                </ul>
+                <button onClick={go('/form')} className="btn-blue" style={{ ...btnStyle, width:'100%', marginTop:24 }}>Começar agora</button>
+              </div>
+            </motion.div>
+
+            {/* Premium */}
+            <motion.div variants={fadeUp(0.1)} initial="hidden" whileInView="show" viewport={{ once:true }}
+              whileHover={{ y:-6, transition:{ duration:0.3 } }}
+              style={{ flex:'1 1 280px', maxWidth:340, position:'relative' }}>
+              <div style={{ background:'white', borderRadius:22, padding:'42px 22px 28px', position:'relative', boxShadow:'0 8px 40px rgba(147,197,253,0.2)' }}>
+                {/* gradient border */}
+                <div style={{ position:'absolute', inset:0, borderRadius:22, padding:2, background:'linear-gradient(135deg,#93c5fd,#f9a8c9)', WebkitMask:'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)', WebkitMaskComposite:'xor', maskComposite:'exclude', pointerEvents:'none', opacity:0.85 }} />
+                <div style={{ position:'absolute', top:-14, left:'50%', transform:'translateX(-50%)', background:'linear-gradient(135deg,#93c5fd,#f9a8c9)', borderRadius:50, padding:'4px 18px', whiteSpace:'nowrap', fontSize:'0.76rem', fontWeight:700, color:'white' }}>⭐ Mais escolhido</div>
+                <p style={{ fontSize:'0.8rem', color:'#93c5fd', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.07em', marginBottom:6 }}>Premium</p>
+                <p className="pf" style={{ fontSize:'2.8rem', fontWeight:700, color:'#2d1b2e' }}>R$59</p>
+                <div style={{ height:2, borderRadius:2, margin:'14px 0 20px', background:'linear-gradient(90deg,#93c5fd,#f9a8c9)' }} />
+                <ul style={{ listStyle:'none', display:'flex', flexDirection:'column', gap:12 }}>
+                  {['3 anos de acesso','Até 20 fotos','Com música 🎵'].map(f => (
+                    <li key={f} style={{ fontSize:'0.93rem', display:'flex', alignItems:'center', gap:6, color:'#374151' }}>
+                      <span style={{ color:'#4ade80' }}>✓</span> {f}
+                    </li>
+                  ))}
+                </ul>
+                <button onClick={go('/form')} className="btn-blue" style={{ ...btnStyle, width:'100%', marginTop:24, background:'linear-gradient(135deg,#93c5fd,#f9a8c9)', boxShadow:'0 8px 24px rgba(147,197,253,0.35)' }}>
+                  Quero o Premium 💙
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── TESTIMONIALS ── */}
+      <section style={{ padding:'80px 24px', background:'#f7fbff' }}>
+        <div style={{ maxWidth:880, margin:'0 auto' }}>
+          <motion.div variants={fadeUp(0)} initial="hidden" whileInView="show" viewport={{ once:true }} style={{ textAlign:'center', marginBottom:48 }}>
+            <span style={{ display:'inline-block', background:'linear-gradient(135deg,#dbeafe,#fce4ef)', borderRadius:50, padding:'5px 18px', fontSize:'0.82rem', color:'#3b82f6', fontWeight:700, marginBottom:14 }}>💬 Depoimentos</span>
+            <h2 className="pf" style={{ fontSize:'2rem', color:'#2d1b2e', fontWeight:700 }}>O que as famílias dizem</h2>
+            <p style={{ color:'#6b5c6e', marginTop:8, fontSize:'0.95rem' }}>Mais de 500 famílias já criaram suas memórias</p>
+          </motion.div>
+          <div style={{ display:'flex', flexWrap:'wrap', justifyContent:'center', gap:18 }}>
+            <TestiCard quote='"Toda a família se emocionou ao escanear o QR code. Presente perfeito!"' name="Ana Clara"    role="Mãe do Miguel 💙" delay={0}   />
+            <TestiCard quote='"Simples, lindo e emocionante. Fiz para minha filha recém-nascida!"'    name="Fernanda Lima" role="Mãe da Sofia 💗"  delay={0.1} />
+            <TestiCard quote='"Em menos de 5 minutos criei algo para guardar para sempre. Amei!"'     name="Juliana Matos" role="Mãe do Davi 💙"   delay={0.2} />
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA FINAL ── */}
+      <section style={{ padding:'88px 24px', background:'linear-gradient(135deg,#f0f7ff,#dbeafe,#fce4ef)', textAlign:'center' }}>
+        <motion.div variants={fadeUp(0)} initial="hidden" whileInView="show" viewport={{ once:true }} style={{ maxWidth:520, margin:'0 auto' }}>
+          <div style={{ fontSize:52, marginBottom:18 }}>🎁</div>
+          <h2 className="pf" style={{ fontSize:'1.9rem', fontWeight:700, color:'#2d1b2e', marginBottom:14 }}>
+            Surpreenda sua família hoje
+          </h2>
+          <p style={{ fontSize:'1rem', color:'#6b5c6e', lineHeight:1.7, marginBottom:30 }}>
+            Uma página única com as memórias do seu bebê. Pronto em menos de 5 minutos!
           </p>
-        </div>
+          <div style={{ display:'flex', justifyContent:'center', gap:12, flexWrap:'wrap' }}>
+            <button onClick={go('/form')} className="btn-blue" style={{ ...btnStyle, fontSize:'1rem', padding:'14px 28px' }}>
+              É um menino 💙
+            </button>
+            <button onClick={go('/form')} className="btn-pink" style={{
+              ...btnStyle,
+              background:'linear-gradient(135deg,#f9a8c9,#e879a0,#d1598c)',
+              boxShadow:'0 8px 24px rgba(232,121,160,0.4)',
+              fontSize:'1rem', padding:'14px 28px',
+            }}>
+              É uma menina 💗
+            </button>
+          </div>
+          <p style={{ marginTop:14, fontSize:'0.8rem', color:'#a08898' }}>Pagamento seguro · Suporte em português</p>
+        </motion.div>
+      </section>
 
-        {/* Direitos autorais */}
-        <p className="mb-4 text-xs">Copyright © 2024 BabyTimee - Todos os direitos reservados</p>
-
-        {/* Legal */}
-        <div className="text-sm">
-          <h3 className="text-gray-200 font-semibold mb-2">Legal</h3>
-          <ul className="space-y-1">
-            <li><a onClick={handleTermsClick}  className="hover:text-white cursor-pointer">Termos de uso</a></li>
-            <li><a onClick={handlePrivacyClick} className="hover:text-white cursor-pointer">Termos de privacidade</a></li>
-          </ul>
+      {/* ── FOOTER ── */}
+      <footer style={{ background:'#2d1b2e', padding:'44px 24px', textAlign:'center' }}>
+        <div style={{ fontSize:30, marginBottom:10 }}>🍼</div>
+        <div className="pf" style={{ fontSize:'1.25rem', fontWeight:700, marginBottom:8, background:'linear-gradient(90deg,#60a5fa,#e879a0)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', display:'inline-block' }}>BabyTimee</div>
+        <p style={{ color:'#a08898', fontSize:'0.88rem', marginBottom:20 }}>Surpreenda sua família com esse presente incrível!</p>
+        <div style={{ display:'flex', justifyContent:'center', gap:24, marginBottom:18 }}>
+          {[['Termos de uso','/terms'],['Termos de privacidade','/privacy']].map(([label,path]) => (
+            <button key={path} onClick={go(path)}
+              style={{ background:'none', border:'none', color:'#a08898', fontSize:'0.83rem', cursor:'pointer', fontFamily:"'Nunito',sans-serif", transition:'color 0.2s' }}
+              onMouseEnter={e => (e.currentTarget.style.color='#93c5fd')}
+              onMouseLeave={e => (e.currentTarget.style.color='#a08898')}
+            >{label}</button>
+          ))}
         </div>
+        <p style={{ color:'#6b5c6e', fontSize:'0.75rem' }}>Copyright © 2026 BabyTimee · Todos os direitos reservados</p>
       </footer>
     </div>
   );
