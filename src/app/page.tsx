@@ -349,7 +349,7 @@ const Home: React.FC = () => {
             >{label}</button>
           ))}
         </div>
-        <p style={{ color:'#6b5c6e', fontSize:'0.75rem' }}>Copyright © 2026 BabyTimee · Todos os direitos reservados</p>
+        <p style={{ color:'#6b5c6e', fontSize:'0.75rem' }}>Copyright © 2026 BabyTimee - Todos os direitos reservados</p>
       </footer>
     </div>
   );
