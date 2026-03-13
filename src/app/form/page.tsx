@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 type FormData = {
@@ -402,11 +402,17 @@ const Form = () => {
             >{label}</button>
           ))}
         </div>
-        <p style={{ color:'#6b5c6e', fontSize:'0.72rem' }}>Copyright © 2024 BabyTimee · Todos os direitos reservados</p>
+        <p style={{ color:'#6b5c6e', fontSize:'0.72rem' }}>Copyright © 2026 BabyTimee · Todos os direitos reservados</p>
         <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </footer>
     </div>
   );
 };
 
-export default Form;
+const FormPage = () => (
+  <Suspense fallback={<div style={{ display:'flex', justifyContent:'center', alignItems:'center', minHeight:'100vh', background:'#fdf6fa' }}>Carregando...</div>}>
+    <Form />
+  </Suspense>
+);
+
+export default FormPage;
