@@ -82,8 +82,8 @@ const Form = () => {
 
   const compressImage = (file: File): Promise<File> => {
     return new Promise((resolve) => {
-      const maxSize = 1200;
-      const quality = 0.8;
+      const maxSize = 800;
+      const quality = 0.7;
       const img = new Image();
       const url = URL.createObjectURL(file);
       img.onload = () => {
@@ -136,6 +136,14 @@ const Form = () => {
     const payload = new FormData();
     Object.entries(formData).forEach(([k,v]) => payload.append(k, v));
     const compressed = await Promise.all(Array.from(files).map(compressImage));
+
+    // Valida tamanho total após compressão
+    const totalSize = compressed.reduce((acc, f) => acc + f.size, 0);
+    if (totalSize > 4 * 1024 * 1024) {
+      setFileError('Fotos muito grandes. Use fotos menores ou em menor quantidade.');
+      return;
+    }
+
     compressed.forEach(f => payload.append('fotos', f));
 
     try {

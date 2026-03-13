@@ -1,12 +1,17 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '20mb',
+    },
+  },
   images: {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'ggtkuawfhxkuffzmsbgn.supabase.co', // Seu domínio de imagens
-        pathname: '/storage/v1/object/public/**',  // Caminho das imagens (se necessário)
+        hostname: 'ytwmtrglnrdsklxktrju.supabase.co',
+        pathname: '/storage/v1/object/public/**',
       },
     ],
   },
