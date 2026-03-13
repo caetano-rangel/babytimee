@@ -1,7 +1,6 @@
 "use client"
 import { useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 const fadeUp = (delay = 0) => ({

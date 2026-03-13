@@ -1,32 +1,60 @@
 export const dynamic = 'force-dynamic';
 
-// src/app/api/webhook/route.ts
 import { NextResponse } from 'next/server';
 import { supabase } from '../../lib/supabaseClient';
 import stripe from '@/app/lib/stripe';
-import sgMail from '@sendgrid/mail';
+import { Resend } from 'resend';
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
-
+const resend = new Resend(process.env.RESEND_API_KEY);
 const secret = process.env.STRIPE_WEBHOOK_SECRET;
 
 const sendEmail = async (email: string, urlSlug: string) => {
-  const msg = {
+  await resend.emails.send({
+    // TODO: trocar para contato@babytimee.com.br após verificar domínio no Resend
+    from: 'BabyTimee <contato@babytimee.com>',
+    replyTo: 'contato.babytimee@gmail.com',
     to: email,
-    from: 'contato.babytimee@gmail.com',
-    subject: 'Sua Página está Pronta! 🎉',
-    text: `Olá! A sua página personalizada está pronta. Acesse: ${process.env.NEXT_PUBLIC_BASE_URL}/${urlSlug}`,
-    html: `<div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
-        <h1 style="color: #e879a0;">Parabéns! 🎉</h1>
-        <p>Olá,</p>
-        <p>A página personalizada do seu bebê está pronta. Clique no link abaixo para acessar:</p>
-        <a href="${process.env.NEXT_PUBLIC_BASE_URL}/${urlSlug}" style="color: #3b82f6; text-decoration: none; font-weight: bold;">Acesse a página do seu bebê aqui! 🍼</a>
-        <p style="margin-top: 20px;">Obrigado por usar o BabyTimee! Se tiver dúvidas, entre em contato conosco.</p>
-        <hr style="border: none; border-top: 1px solid #ddd;" />
-        <p style="font-size: 12px; color: #999;">© 2026 BabyTimee. Todos os direitos reservados.</p>
-      </div>`,
-  };
-  await sgMail.send(msg);
+    subject: 'A página do seu bebê está pronta! 🍼',
+    html: `
+      <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 560px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08);">
+
+        <div style="background: linear-gradient(135deg, #dbeafe, #fce4ef); padding: 40px 32px; text-align: center;">
+          <div style="font-size: 48px; margin-bottom: 12px;">🍼</div>
+          <h1 style="font-size: 24px; color: #2d1b2e; margin: 0; font-weight: 700;">BabyTimee</h1>
+          <p style="color: #6b5c6e; margin: 8px 0 0; font-size: 14px;">Memórias que duram para sempre</p>
+        </div>
+
+        <div style="padding: 36px 32px;">
+          <h2 style="color: #2d1b2e; font-size: 20px; margin: 0 0 12px;">Parabéns! 🎉</h2>
+          <p style="color: #4a3550; font-size: 15px; line-height: 1.7; margin: 0 0 24px;">
+            A página personalizada do seu bebê está pronta! Acesse o link abaixo para visualizar e compartilhar com sua família.
+          </p>
+
+          <div style="text-align: center; margin: 32px 0;">
+            <a href="${process.env.NEXT_PUBLIC_BASE_URL}/${urlSlug}"
+              style="display: inline-block; background: linear-gradient(135deg, #93c5fd, #e879a0); color: white; text-decoration: none; padding: 14px 36px; border-radius: 50px; font-size: 15px; font-weight: 700;">
+              Ver a página do meu bebê 💗
+            </a>
+          </div>
+
+          <p style="color: #a08898; font-size: 13px; line-height: 1.6; margin: 0;">
+            Ou copie e cole este link no navegador:<br/>
+            <a href="${process.env.NEXT_PUBLIC_BASE_URL}/${urlSlug}" style="color: #3b82f6; word-break: break-all;">
+              ${process.env.NEXT_PUBLIC_BASE_URL}/${urlSlug}
+            </a>
+          </p>
+        </div>
+
+        <div style="background: #2d1b2e; padding: 24px 32px; text-align: center;">
+          <p style="color: #6b5c6e; font-size: 12px; margin: 0;">
+            © 2026 BabyTimee · Todos os direitos reservados<br/>
+            Dúvidas? <a href="mailto:contato.babytimee@gmail.com" style="color: #93c5fd;">contato.babytimee@gmail.com</a>
+          </p>
+        </div>
+
+      </div>
+    `,
+  });
 };
 
 export async function POST(req: Request) {
@@ -62,7 +90,7 @@ export async function POST(req: Request) {
         }
         break;
 
-      case 'checkout.session.expired':
+      case 'checkout.session.expired': {
         const expiredSlug = event.data.object.metadata?.slug;
         if (expiredSlug) {
           const { error } = await supabase
@@ -76,6 +104,7 @@ export async function POST(req: Request) {
           }
         }
         break;
+      }
 
       default:
         console.log(`Evento desconhecido: ${event.type}`);
