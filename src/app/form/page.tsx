@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 type FormData = {
   nomeBebe: string; nomePais: string; dataNascimento: string;
@@ -44,6 +44,14 @@ function Field({ label, error, children }: { label: string; error?: string; chil
 
 const Form = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const sexoParam = searchParams.get('sexo');
+    if (sexoParam === 'menino' || sexoParam === 'menina') {
+      setFormData(p => ({ ...p, sexo: sexoParam }));
+    }
+  }, [searchParams]);
   const [step, setStep] = useState<1|2>(1);
   const [formData, setFormData] = useState<FormData>({
     nomeBebe:'', nomePais:'', dataNascimento:'',
@@ -70,6 +78,32 @@ const Form = () => {
     const { name, value } = e.target;
     setFormData(p => ({ ...p, [name]:value }));
     setFieldErrors(p => ({ ...p, [name]:undefined }));
+  };
+
+  const compressImage = (file: File): Promise<File> => {
+    return new Promise((resolve) => {
+      const maxSize = 1200;
+      const quality = 0.8;
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        const canvas = document.createElement('canvas');
+        let { width, height } = img;
+        if (width > maxSize || height > maxSize) {
+          if (width > height) { height = Math.round(height * maxSize / width); width = maxSize; }
+          else { width = Math.round(width * maxSize / height); height = maxSize; }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext('2d')!.drawImage(img, 0, 0, width, height);
+        canvas.toBlob(blob => {
+          resolve(blob ? new File([blob], file.name, { type: 'image/jpeg' }) : file);
+        }, 'image/jpeg', quality);
+      };
+      img.onerror = () => resolve(file);
+      img.src = url;
+    });
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,15 +135,21 @@ const Form = () => {
 
     const payload = new FormData();
     Object.entries(formData).forEach(([k,v]) => payload.append(k, v));
-    Array.from(files).forEach(f => payload.append('fotos', f));
+    const compressed = await Promise.all(Array.from(files).map(compressImage));
+    compressed.forEach(f => payload.append('fotos', f));
 
     try {
       setIsSubmitting(true);
       const res = await fetch('/api/create-checkout', { method:'POST', body:payload });
       const data = await res.json();
-      if (data.url) window.location.href = data.url;
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert('Erro ao processar pedido. Tente novamente.\n\n' + (data.error || 'Erro desconhecido'));
+      }
     } catch (err) {
       console.error('Erro no checkout:', err);
+      alert('Erro de conexão. Verifique sua internet e tente novamente.');
     } finally {
       setIsSubmitting(false);
     }
@@ -354,7 +394,7 @@ const Form = () => {
             >{label}</button>
           ))}
         </div>
-        <p style={{ color:'#6b5c6e', fontSize:'0.72rem' }}>Copyright © 2026 BabyTimee · Todos os direitos reservados</p>
+        <p style={{ color:'#6b5c6e', fontSize:'0.72rem' }}>Copyright © 2024 BabyTimee · Todos os direitos reservados</p>
         <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </footer>
     </div>
