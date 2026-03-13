@@ -114,7 +114,7 @@ const SIGNOS: ZodiacSign[] = [
   {
     nome: 'Peixes', simbolo: '♓', elemento: 'Água 💧', pedra: 'Aquamarina 🩵', emoji: '🐟',
     datas: '19/02 – 20/03',
-    descricao: 'Sensível, criativo e empático. Piscianos têm uma imaginação vasta e uma capacidade única de sentir e conectar com as emoções alheias.',
+    descricao: 'Sensível, criativo e empático. Piscinos têm uma imaginação vasta e uma capacidade única de sentir e conectar com as emoções alheias.',
   },
 ];
 
@@ -349,7 +349,7 @@ const UserPage: React.FC<PageProps> = ({ params }) => {
     if (!emblaApi) return;
     const onSelect = () => setSelectedIndex(emblaApi.selectedScrollSnap());
     emblaApi.on('select', onSelect);
-    const auto = setInterval(() => { if (emblaApi.canScrollNext()) emblaApi.scrollNext(); else emblaApi.scrollTo(0); }, 5000);
+    const auto = setInterval(() => emblaApi.scrollNext(), 5000);
     return () => { clearInterval(auto); emblaApi.off('select', onSelect); };
   }, [emblaApi]);
 
@@ -523,7 +523,7 @@ const UserPage: React.FC<PageProps> = ({ params }) => {
 
       {/* ── FOOTER ── */}
       <footer style={{ background:'#2d1b2e', padding:'32px 24px', textAlign:'center' }}>
-        <img src="/favicon.ico" alt="BabyTimee" style={{ width:32, height:32, objectFit:'contain', margin:'0 auto 8px', display:'block' }} />
+        <img src="/chupeta.png" alt="BabyTimee" style={{ width:32, height:32, objectFit:'contain', margin:'0 auto 8px', display:'block' }} />
         <p className="pf" style={{ color: t.footerName, fontWeight:700, marginBottom:4 }}>BabyTimee</p>
         <p style={{ color:'#6b5c6e', fontSize:'0.72rem' }}>Copyright © 2026 BabyTimee · Todos os direitos reservados</p>
       </footer>
