@@ -1,6 +1,7 @@
 "use client"
 import { useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 const fadeUp = (delay = 0) => ({
@@ -198,10 +199,10 @@ const Home: React.FC = () => {
             </p>
 
             <div style={{ display:'flex', flexWrap:'wrap', gap:12, marginBottom:12 }}>
-              <button onClick={go('/form')} className="btn-blue" style={{ ...btnStyle, fontSize:'1.05rem', padding:'15px 32px' }}>
+              <button onClick={go('/form?sexo=menino')} className="btn-blue" style={{ ...btnStyle, fontSize:'1.05rem', padding:'15px 32px' }}>
                 É um menino 💙
               </button>
-              <button onClick={go('/form')} className="btn-pink" style={{
+              <button onClick={go('/form?sexo=menina')} className="btn-pink" style={{
                 ...btnStyle,
                 background:'linear-gradient(135deg,#f9a8c9,#e879a0,#d1598c)',
                 boxShadow:'0 8px 24px rgba(232,121,160,0.4)',
@@ -233,6 +234,40 @@ const Home: React.FC = () => {
             <StepCard emoji="💳" num="2" title="Faça o pagamento"   desc="Seguro e instantâneo via cartão ou Pix."                   delay={0.1} />
             <StepCard emoji="🎁" num="3" title="Receba o QR Code"   desc="Um QR Code exclusivo para acessar a página do bebê."      delay={0.2} />
             <StepCard emoji="🥰" num="4" title="Faça uma surpresa!" desc="Imprima e presenteie sua família com esse momento único."  delay={0.3} />
+          </div>
+        </div>
+      </section>
+
+      {/* ── FUNCIONALIDADES ── */}
+      <section style={{ padding:'80px 24px', background:'white' }}>
+        <div style={{ maxWidth:880, margin:'0 auto' }}>
+          <motion.div variants={fadeUp(0)} initial="hidden" whileInView="show" viewport={{ once:true }} style={{ textAlign:'center', marginBottom:48 }}>
+            <span style={{ display:'inline-block', background:'linear-gradient(135deg,#dbeafe,#fce4ef)', borderRadius:50, padding:'5px 18px', fontSize:'0.82rem', color:'#3b82f6', fontWeight:700, marginBottom:14 }}>✨ O que está incluído</span>
+            <h2 className="pf" style={{ fontSize:'2rem', color:'#2d1b2e', fontWeight:700 }}>Tudo que a página do seu bebê tem</h2>
+            <p style={{ color:'#6b5c6e', marginTop:8, fontSize:'0.95rem' }}>Uma experiência completa e emocionante</p>
+          </motion.div>
+
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))', gap:20 }}>
+            {[
+              { emoji:'📸', title:'Galeria de fotos', desc:'Carrossel com as fotos mais lindas do seu bebê, com swipe e visualização em tela cheia.', color:'#dbeafe', badge:'#3b82f6' },
+              { emoji:'⏱️', title:'Contador de vida', desc:'Contador em tempo real mostrando anos, meses, dias, horas, minutos e segundos de vida.', color:'#fce4ef', badge:'#e879a0' },
+              { emoji:'✨', title:'Signo do bebê', desc:'Signo calculado automaticamente com símbolo, elemento, pedra e descrição personalizada.', color:'#ede9fe', badge:'#a78bfa' },
+              { emoji:'🧸', title:'Curiosidades', desc:'Dados divertidos como batimentos cardíacos, fraldas trocadas e voltas ao redor do Sol.', color:'#dcfce7', badge:'#22c55e' },
+              { emoji:'💌', title:'Mensagem especial', desc:'Uma mensagem dos pais eternizada na página com um layout elegante e emocional.', color:'#fef9c3', badge:'#ca8a04' },
+              { emoji:'📱', title:'QR Code exclusivo', desc:'QR Code único para acessar e compartilhar a página com toda a família.', color:'#dbeafe', badge:'#3b82f6' },
+              { emoji:'🎵', title:'Música de fundo', desc:'Uma trilha sonora especial que toca ao abrir a página. Disponível no plano Premium.', color:'#fce4ef', badge:'#e879a0' },
+            ].map(({ emoji, title, desc, color, badge }, i) => (
+              <motion.div key={i} variants={fadeUp(i * 0.05)} initial="hidden" whileInView="show" viewport={{ once:true }}
+                whileHover={{ y:-4, transition:{ duration:0.2 } }}
+                style={{ background:'white', borderRadius:20, padding:'24px 20px', border:'1.5px solid #f0eeff', boxShadow:'0 4px 20px rgba(167,139,250,0.08)', display:'flex', flexDirection:'column', gap:12 }}
+              >
+                <div style={{ width:48, height:48, borderRadius:14, background:color, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.5rem', flexShrink:0 }}>{emoji}</div>
+                <div>
+                  <p style={{ fontWeight:700, color:'#2d1b2e', fontSize:'0.95rem', marginBottom:6 }}>{title}</p>
+                  <p style={{ color:'#6b5c6e', fontSize:'0.85rem', lineHeight:1.6 }}>{desc}</p>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
@@ -318,10 +353,10 @@ const Home: React.FC = () => {
             Uma página única com as memórias do seu bebê. Pronto em menos de 5 minutos!
           </p>
           <div style={{ display:'flex', justifyContent:'center', gap:12, flexWrap:'wrap' }}>
-            <button onClick={go('/form')} className="btn-blue" style={{ ...btnStyle, fontSize:'1rem', padding:'14px 28px' }}>
+            <button onClick={go('/form?sexo=menino')} className="btn-blue" style={{ ...btnStyle, fontSize:'1rem', padding:'14px 28px' }}>
               É um menino 💙
             </button>
-            <button onClick={go('/form')} className="btn-pink" style={{
+            <button onClick={go('/form?sexo=menina')} className="btn-pink" style={{
               ...btnStyle,
               background:'linear-gradient(135deg,#f9a8c9,#e879a0,#d1598c)',
               boxShadow:'0 8px 24px rgba(232,121,160,0.4)',
@@ -348,7 +383,7 @@ const Home: React.FC = () => {
             >{label}</button>
           ))}
         </div>
-        <p style={{ color:'#6b5c6e', fontSize:'0.75rem' }}>Copyright © 2026 BabyTimee - Todos os direitos reservados</p>
+        <p style={{ color:'#6b5c6e', fontSize:'0.75rem' }}>Copyright © 2026 BabyTimee · Todos os direitos reservados</p>
       </footer>
     </div>
   );
