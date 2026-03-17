@@ -309,7 +309,8 @@ const Form = () => {
                 <input type="email" name="email" value={formData.email} onChange={handleChange}
                   placeholder="email@exemplo.com" style={{ ...inputStyle, border: fieldErrors.email ? '1.5px solid #f87171' : `1.5px solid ${t.border}` }} />
               </Field>
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
+              <style>{`@media(max-width:500px){.date-time-grid{grid-template-columns:1fr !important;}}`}</style>
+              <div className="date-time-grid" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
                 <Field label="Data de Nascimento 📅" error={fieldErrors.dataNascimento}>
                   <input type="date" name="dataNascimento" value={formData.dataNascimento} onChange={handleChange}
                     style={{ ...inputStyle, border: fieldErrors.dataNascimento ? '1.5px solid #f87171' : `1.5px solid ${t.border}` }} />
