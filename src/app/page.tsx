@@ -347,7 +347,7 @@ const Home: React.FC = () => {
           <motion.div variants={fadeUp(0)} initial="hidden" whileInView="show" viewport={{ once:true }} style={{ textAlign:'center', marginBottom:48 }}>
             <span style={{ display:'inline-block', background:'linear-gradient(135deg,#dbeafe,#fce4ef)', borderRadius:50, padding:'5px 18px', fontSize:'0.82rem', color:'#3b82f6', fontWeight:700, marginBottom:14 }}>💬 Depoimentos</span>
             <h2 className="pf" style={{ fontSize:'2rem', color:'#2d1b2e', fontWeight:700 }}>O que as famílias dizem</h2>
-            <p style={{ color:'#6b5c6e', marginTop:8, fontSize:'0.95rem' }}>Mais de 500 famílias já criaram suas memórias</p>
+            <p style={{ color:'#6b5c6e', marginTop:8, fontSize:'0.95rem' }}>Crie sua memória tambem!</p>
           </motion.div>
           <div style={{ display:'flex', flexWrap:'wrap', justifyContent:'center', gap:18 }}>
             <TestiCard quote='"Toda a família se emocionou ao escanear o QR code. Presente perfeito!"' name="Ana Clara"    role="Mãe do Miguel 💙" delay={0}   />
