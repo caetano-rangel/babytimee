@@ -273,58 +273,73 @@ const Home: React.FC = () => {
       </section>
 
       {/* ── PRICING ── */}
-      <section style={{ padding:'80px 24px', background:'linear-gradient(155deg,#f0f7ff,#fce4ef30)' }}>
-        <div style={{ maxWidth:820, margin:'0 auto' }}>
-          <motion.div variants={fadeUp(0)} initial="hidden" whileInView="show" viewport={{ once:true }} style={{ textAlign:'center', marginBottom:48 }}>
-            <span style={{ display:'inline-block', background:'linear-gradient(135deg,#dbeafe,#fce4ef)', borderRadius:50, padding:'5px 18px', fontSize:'0.82rem', color:'#3b82f6', fontWeight:700, marginBottom:14 }}>💰 Investimento único</span>
-            <h2 className="pf" style={{ fontSize:'2rem', color:'#2d1b2e', fontWeight:700 }}>Escolha seu Plano</h2>
-            <p style={{ color:'#6b5c6e', marginTop:8, fontSize:'0.95rem' }}>Memória para seus primeiros anos</p>
-          </motion.div>
+<section style={{ padding: '80px 24px', background: 'linear-gradient(155deg,#f0f7ff,#fce4ef30)' }}>
+  <div style={{ maxWidth: 820, margin: '0 auto' }}>
+    <motion.div variants={fadeUp(0)} initial="hidden" whileInView="show" viewport={{ once: true }} style={{ textAlign: 'center', marginBottom: 48 }}>
+      <span style={{ display: 'inline-block', background: 'linear-gradient(135deg,#dbeafe,#fce4ef)', borderRadius: 50, padding: '5px 18px', fontSize: '0.82rem', color: '#3b82f6', fontWeight: 700, marginBottom: 14 }}>💰 Investimento único</span>
+      <h2 className="pf" style={{ fontSize: '2rem', color: '#2d1b2e', fontWeight: 700 }}>Escolha seu Plano</h2>
+      <p style={{ color: '#6b5c6e', marginTop: 8, fontSize: '0.95rem' }}>Memória eterna para os primeiros anos</p>
+    </motion.div>
 
-          <div style={{ display:'flex', flexWrap:'wrap', gap:24, justifyContent:'center' }}>
-            {/* Básico */}
-            <motion.div variants={fadeUp(0)} initial="hidden" whileInView="show" viewport={{ once:true }}
-              whileHover={{ y:-6, transition:{ duration:0.3 } }}
-              style={{ flex:'1 1 280px', maxWidth:340 }}>
-              <div style={{ background:'white', borderRadius:22, padding:'28px 22px', border:'1.5px solid #dbeafe', boxShadow:'0 4px 24px rgba(191,219,254,0.15)' }}>
-                <p style={{ fontSize:'0.8rem', color:'#93c5fd', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.07em', marginBottom:6 }}>Básico</p>
-                <p className="pf" style={{ fontSize:'2.8rem', fontWeight:700, color:'#2d1b2e' }}>R$29</p>
-                <div style={{ height:2, borderRadius:2, margin:'14px 0 20px', background:'linear-gradient(90deg,#dbeafe,#bfdbfe)' }} />
-                <ul style={{ listStyle:'none', display:'flex', flexDirection:'column', gap:12 }}>
-                  <li style={{ fontSize:'0.93rem', display:'flex', alignItems:'center', gap:6, color:'#374151' }}><span style={{ color:'#4ade80' }}>✓</span> 1 ano de acesso</li>
-                  <li style={{ fontSize:'0.93rem', display:'flex', alignItems:'center', gap:6, color:'#374151' }}><span style={{ color:'#4ade80' }}>✓</span> Até 10 fotos</li>
-                  <li style={{ fontSize:'0.93rem', display:'flex', alignItems:'center', gap:6, color:'#9ca3af' }}><span style={{ color:'#f87171' }}>✕</span> Sem música</li>
-                </ul>
-                <button onClick={go('/form')} className="btn-blue" style={{ ...btnStyle, width:'100%', marginTop:24 }}>Começar agora</button>
-              </div>
-            </motion.div>
-
-            {/* Premium */}
-            <motion.div variants={fadeUp(0.1)} initial="hidden" whileInView="show" viewport={{ once:true }}
-              whileHover={{ y:-6, transition:{ duration:0.3 } }}
-              style={{ flex:'1 1 280px', maxWidth:340, position:'relative' }}>
-              <div style={{ background:'white', borderRadius:22, padding:'42px 22px 28px', position:'relative', boxShadow:'0 8px 40px rgba(147,197,253,0.2)' }}>
-                {/* gradient border */}
-                <div style={{ position:'absolute', inset:0, borderRadius:22, padding:2, background:'linear-gradient(135deg,#93c5fd,#f9a8c9)', WebkitMask:'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)', WebkitMaskComposite:'xor', maskComposite:'exclude', pointerEvents:'none', opacity:0.85 }} />
-                <div style={{ position:'absolute', top:-14, left:'50%', transform:'translateX(-50%)', background:'linear-gradient(135deg,#93c5fd,#f9a8c9)', borderRadius:50, padding:'4px 18px', whiteSpace:'nowrap', fontSize:'0.76rem', fontWeight:700, color:'white' }}>⭐ Mais escolhido</div>
-                <p style={{ fontSize:'0.8rem', color:'#93c5fd', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.07em', marginBottom:6 }}>Premium</p>
-                <p className="pf" style={{ fontSize:'2.8rem', fontWeight:700, color:'#2d1b2e' }}>R$59</p>
-                <div style={{ height:2, borderRadius:2, margin:'14px 0 20px', background:'linear-gradient(90deg,#93c5fd,#f9a8c9)' }} />
-                <ul style={{ listStyle:'none', display:'flex', flexDirection:'column', gap:12 }}>
-                  {['3 anos de acesso','Até 20 fotos','Com música 🎵'].map(f => (
-                    <li key={f} style={{ fontSize:'0.93rem', display:'flex', alignItems:'center', gap:6, color:'#374151' }}>
-                      <span style={{ color:'#4ade80' }}>✓</span> {f}
-                    </li>
-                  ))}
-                </ul>
-                <button onClick={go('/form')} className="btn-blue" style={{ ...btnStyle, width:'100%', marginTop:24, background:'linear-gradient(135deg,#93c5fd,#f9a8c9)', boxShadow:'0 8px 24px rgba(147,197,253,0.35)' }}>
-                  Quero o Premium 💙
-                </button>
-              </div>
-            </motion.div>
-          </div>
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, justifyContent: 'center' }}>
+      
+      {/* Plano Básico */}
+      <motion.div variants={fadeUp(0)} initial="hidden" whileInView="show" viewport={{ once: true }}
+        whileHover={{ y: -6, transition: { duration: 0.3 } }}
+        style={{ flex: '1 1 280px', maxWidth: 340 }}>
+        <div style={{ background: 'white', borderRadius: 22, padding: '28px 22px', border: '1.5px solid #dbeafe', boxShadow: '0 4px 24px rgba(191,219,254,0.15)' }}>
+          <p style={{ fontSize: '0.8rem', color: '#93c5fd', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 6 }}>Básico</p>
+          <p className="pf" style={{ fontSize: '2.8rem', fontWeight: 700, color: '#2d1b2e' }}>R$29</p>
+          <div style={{ height: 2, borderRadius: 2, margin: '14px 0 20px', background: 'linear-gradient(90deg,#dbeafe,#bfdbfe)' }} />
+          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 12, padding: 0 }}>
+            <li style={{ fontSize: '0.93rem', display: 'flex', alignItems: 'center', gap: 8, color: '#374151' }}><span style={{ color: '#4ade80' }}>✓</span> 1 ano de acesso</li>
+            <li style={{ fontSize: '0.93rem', display: 'flex', alignItems: 'center', gap: 8, color: '#374151' }}><span style={{ color: '#4ade80' }}>✓</span> Até 10 fotos</li>
+            <li style={{ fontSize: '0.93rem', display: 'flex', alignItems: 'center', gap: 8, color: '#374151' }}><span style={{ color: '#4ade80' }}>✓</span> Contador de vida</li>
+            <li style={{ fontSize: '0.93rem', display: 'flex', alignItems: 'center', gap: 8, color: '#9ca3af' }}><span style={{ color: '#f87171' }}>✕</span> Sem música de fundo</li>
+            <li style={{ fontSize: '0.93rem', display: 'flex', alignItems: 'center', gap: 8, color: '#9ca3af' }}><span style={{ color: '#f87171' }}>✕</span> Sem Signo</li>
+            <li style={{ fontSize: '0.93rem', display: 'flex', alignItems: 'center', gap: 8, color: '#9ca3af' }}><span style={{ color: '#f87171' }}>✕</span> Sem Curiosidades</li>
+          </ul>
+          <button onClick={go('/form')} className="btn-blue" style={{ ...btnStyle, width: '100%', marginTop: 24 }}>Começar agora</button>
         </div>
-      </section>
+      </motion.div>
+
+      {/* Plano Premium */}
+      <motion.div variants={fadeUp(0.1)} initial="hidden" whileInView="show" viewport={{ once: true }}
+        whileHover={{ y: -6, transition: { duration: 0.3 } }}
+        style={{ flex: '1 1 280px', maxWidth: 340, position: 'relative' }}>
+        <div style={{ background: 'white', borderRadius: 22, padding: '42px 22px 28px', position: 'relative', boxShadow: '0 8px 40px rgba(147,197,253,0.2)' }}>
+          {/* gradient border overlay */}
+          <div style={{ position: 'absolute', inset: 0, borderRadius: 22, padding: 2, background: 'linear-gradient(135deg,#93c5fd,#f9a8c9)', WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)', WebkitMaskComposite: 'xor', maskComposite: 'exclude', pointerEvents: 'none', opacity: 0.85 }} />
+          
+          <div style={{ position: 'absolute', top: -14, left: '50%', transform: 'translateX(-50%)', background: 'linear-gradient(135deg,#93c5fd,#f9a8c9)', borderRadius: 50, padding: '4px 18px', whiteSpace: 'nowrap', fontSize: '0.76rem', fontWeight: 700, color: 'white', zIndex: 2 }}>⭐ Mais escolhido</div>
+          
+          <p style={{ fontSize: '0.8rem', color: '#93c5fd', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 6 }}>Premium</p>
+          <p className="pf" style={{ fontSize: '2.8rem', fontWeight: 700, color: '#2d1b2e' }}>R$59</p>
+          <div style={{ height: 2, borderRadius: 2, margin: '14px 0 20px', background: 'linear-gradient(90deg,#93c5fd,#f9a8c9)' }} />
+          
+          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 12, padding: 0 }}>
+            <li style={{ fontSize: '0.93rem', display: 'flex', alignItems: 'center', gap: 8, color: '#374151' }}><span style={{ color: '#4ade80' }}>✓</span> 3 anos de acesso</li>
+            <li style={{ fontSize: '0.93rem', display: 'flex', alignItems: 'center', gap: 8, color: '#374151' }}><span style={{ color: '#4ade80' }}>✓</span> Até 30 fotos (Galeria Full)</li>
+            <li style={{ fontSize: '0.93rem', display: 'flex', alignItems: 'center', gap: 8, color: '#374151' }}><span style={{ color: '#4ade80' }}>✓</span> Música de fundo 🎵</li>
+            <li style={{ fontSize: '0.93rem', display: 'flex', alignItems: 'center', gap: 8, color: '#374151' }}><span style={{ color: '#4ade80' }}>✓</span> Signo e descrição </li>
+            <li style={{ fontSize: '0.93rem', display: 'flex', alignItems: 'center', gap: 8, color: '#374151' }}><span style={{ color: '#4ade80' }}>✓</span> Curiosidades divertidas </li>
+            <li style={{ fontSize: '0.93rem', display: 'flex', alignItems: 'center', gap: 8, color: '#374151' }}><span style={{ color: '#4ade80' }}>✓</span> QR Code de alta resolução</li>
+          </ul>
+
+          <button onClick={go('/form')} className="btn-blue" style={{ 
+            ...btnStyle, 
+            width: '100%', 
+            marginTop: 24, 
+            background: 'linear-gradient(135deg,#93c5fd,#f9a8c9)', 
+            boxShadow: '0 8px 24px rgba(147,197,253,0.35)' 
+          }}>
+            Quero o Premium 💙
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  </div>
+</section>
 
       {/* ── TESTIMONIALS ── */}
       <section style={{ padding:'80px 24px', background:'#f7fbff' }}>
