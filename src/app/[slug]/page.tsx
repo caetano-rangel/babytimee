@@ -319,6 +319,14 @@ const UserPage = ({ params }: PageProps) => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
   const [timeElapsed, setTimeElapsed] = useState<TimeElapsed | null>(null);
+  // Edição de fotos
+  const [editMode, setEditMode]       = useState(false);
+  const [authModal, setAuthModal]     = useState(false);
+  const [authEmail, setAuthEmail]     = useState('');
+  const [authError, setAuthError]     = useState('');
+  const [authLoading, setAuthLoading] = useState(false);
+  const [editLoading, setEditLoading] = useState(false);
+  const [fotosEdit, setFotosEdit]     = useState<string[]>([]);
 
   const t = userData ? themes[userData.sexo ?? 'menina'] : themes.menina;
 
@@ -329,6 +337,7 @@ const UserPage = ({ params }: PageProps) => {
       const { data, error } = await supabase.from('users').select('*').eq('slug', s).single();
       if (error || !data) { console.error('Erro:', error); return; }
       setUserData(data as UserData);
+      setFotosEdit((data as UserData).fotos || []);
       const qr = await QRCode.toDataURL(`${process.env.NEXT_PUBLIC_BASE_URL}/${s}`, { width:280, margin:2, color:{ dark:'#2d1b2e', light:'#ffffff' } });
       setQrCodeUrl(qr);
     };
@@ -367,6 +376,55 @@ const UserPage = ({ params }: PageProps) => {
     return () => document.removeEventListener('click', handler);
   }, [userData]);
 
+  const handleAuth = async () => {
+    if (!authEmail.trim()) { setAuthError('Digite seu email.'); return; }
+    setAuthLoading(true); setAuthError('');
+    try {
+      const fd = new FormData();
+      fd.append('slug', slug!); fd.append('email', authEmail); fd.append('action', 'validate');
+      const res = await fetch('/api/edit-photos', { method: 'POST', body: fd });
+      if (res.status === 401) { setAuthError('Email incorreto. Tente novamente.'); return; }
+      if (res.status === 404) { setAuthError('Página não encontrada.'); return; }
+      setAuthModal(false);
+      setEditMode(true);
+    } catch { setAuthError('Erro de conexão.'); }
+    finally { setAuthLoading(false); }
+  };
+
+  const handleRemoveFoto = async (url: string) => {
+    if (!slug || editLoading) return;
+    if (!confirm('Remover esta foto?')) return;
+    setEditLoading(true);
+    try {
+      const fd = new FormData();
+      fd.append('slug', slug); fd.append('email', authEmail);
+      fd.append('action', 'remove'); fd.append('fotoUrl', url);
+      const res  = await fetch('/api/edit-photos', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (res.ok) {
+        setFotosEdit(data.fotos);
+        if (userData) setUserData({ ...userData, fotos: data.fotos });
+      } else { alert(data.error || 'Erro ao remover foto.'); }
+    } finally { setEditLoading(false); }
+  };
+
+  const handleAddFoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !slug || editLoading) return;
+    setEditLoading(true);
+    try {
+      const fd = new FormData();
+      fd.append('slug', slug); fd.append('email', authEmail);
+      fd.append('action', 'add'); fd.append('foto', file);
+      const res  = await fetch('/api/edit-photos', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (res.ok) {
+        setFotosEdit(data.fotos);
+        if (userData) setUserData({ ...userData, fotos: data.fotos });
+      } else { alert(data.error || 'Erro ao adicionar foto.'); }
+    } finally { setEditLoading(false); e.target.value = ''; }
+  };
+
   const downloadQR = useCallback(() => {
     if (!qrCodeUrl || !slug) return;
     const a = document.createElement('a'); a.href = qrCodeUrl; a.download = `QRCode-${slug}.png`; a.click();
@@ -403,6 +461,30 @@ const UserPage = ({ params }: PageProps) => {
 
       {userData.plano === 'sempre' && <audio id="bg-audio" loop><source src="/rugrats.mp3" type="audio/mp3"/></audio>}
 
+      {/* ── MODAL AUTH ── */}
+      {authModal && (
+        <div onClick={() => setAuthModal(false)} style={{ position:'fixed', inset:0, zIndex:999, background:'rgba(0,0,0,.6)', display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}>
+          <div onClick={e => e.stopPropagation()} style={{ background:'white', borderRadius:24, padding:'40px 32px', maxWidth:400, width:'100%', boxShadow:'0 24px 80px rgba(0,0,0,.2)' }}>
+            <h2 className="pf" style={{ fontSize:'1.4rem', color:'#2d1b2e', marginBottom:8 }}>Gerenciar fotos</h2>
+            <p style={{ fontSize:'.88rem', color:'#a08898', marginBottom:24, lineHeight:1.5 }}>
+              Digite o email usado na criação da página para entrar no modo de edição.
+            </p>
+            <input
+              type="email" value={authEmail}
+              onChange={e => { setAuthEmail(e.target.value); setAuthError(''); }}
+              placeholder="seu@email.com"
+              onKeyDown={e => e.key === 'Enter' && handleAuth()}
+              style={{ width:'100%', padding:'12px 16px', borderRadius:14, border:`1.5px solid ${authError ? '#f87171' : t.border1}`, fontSize:'.97rem', fontFamily:"'Nunito',sans-serif", outline:'none', marginBottom:8, boxSizing:'border-box' }}
+            />
+            {authError && <p style={{ color:'#ef4444', fontSize:'.78rem', marginBottom:8 }}>{authError}</p>}
+            <button onClick={handleAuth} disabled={authLoading}
+              style={{ width:'100%', padding:'13px', borderRadius:50, border:'none', background:t.gradient, color:'white', fontWeight:700, fontSize:'1rem', cursor: authLoading ? 'wait' : 'pointer', fontFamily:"'Nunito',sans-serif", marginTop:4 }}>
+              {authLoading ? 'Verificando...' : 'Entrar no modo de edição'}
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* ── HERO ── */}
       <div style={{ position:'relative', overflow:'hidden', padding:'64px 24px 48px', textAlign:'center', background:t.heroBg, borderBottom:`1px solid ${t.border1}` }}>
         <div style={{ position:'absolute', top:-60, right:-60, width:260, height:260, background:`radial-gradient(circle,${t.blobColor1},transparent 70%)`, borderRadius:'50%', pointerEvents:'none' }} />
@@ -424,8 +506,52 @@ const UserPage = ({ params }: PageProps) => {
 
       <div style={{ maxWidth:680, margin:'0 auto', padding:'48px 20px 80px' }}>
 
-        {/* ── CAROUSEL ── */}
-        {userData.fotos.length > 0 && <GaleriaCarrossel fotos={userData.fotos} tema={t} />}
+        {/* ── CAROUSEL / EDIÇÃO ── */}
+        {editMode ? (
+          <div style={{ marginBottom:56 }}>
+            <div style={{ textAlign:'center', marginBottom:20 }}>
+              <span style={{ display:'inline-block', background:`linear-gradient(135deg,${t.light},#ede9fe)`, borderRadius:50, padding:'5px 18px', fontSize:'.8rem', color:t.badgeColor, fontWeight:700 }}>
+                ✏️ Editando galeria — clique no ✕ para remover
+              </span>
+            </div>
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(140px,1fr))', gap:8 }}>
+              {fotosEdit.map((url, i) => (
+                <div key={i} style={{ position:'relative', borderRadius:12, overflow:'hidden' }}>
+                  <img src={url} alt={`Foto ${i+1}`} style={{ width:'100%', height:120, objectFit:'cover', display:'block' }} />
+                  <button onClick={() => handleRemoveFoto(url)} style={{ position:'absolute', top:6, right:6, background:'rgba(0,0,0,.65)', border:'none', color:'white', borderRadius:'50%', width:28, height:28, cursor:'pointer', fontSize:'.82rem', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Nunito',sans-serif" }}>✕</button>
+                </div>
+              ))}
+              {fotosEdit.length < (userData.plano === 'sempre' ? 20 : 10) && (
+                <label style={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', height:120, borderRadius:12, cursor:'pointer', border:`2px dashed ${t.border1}`, background:`${t.light}40`, color:t.badgeColor, fontSize:'.8rem', fontWeight:700, gap:6 }}>
+                  <span style={{ fontSize:24 }}>+</span>
+                  Adicionar
+                  <input type="file" accept="image/*" onChange={handleAddFoto} style={{ display:'none' }} />
+                </label>
+              )}
+            </div>
+          </div>
+        ) : (
+          userData.fotos.length > 0 && <GaleriaCarrossel fotos={userData.fotos} tema={t} />
+        )}
+
+        {/* Botão gerenciar fotos */}
+        <div style={{ textAlign:'center', marginTop:-36, marginBottom:56 }}>
+          {editMode ? (
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:12, flexWrap:'wrap' }}>
+              <span style={{ fontSize:'.82rem', color:'#a08898', fontWeight:600 }}>
+                ✏️ {fotosEdit.length}/{userData.plano === 'sempre' ? 20 : 10} fotos
+                {editLoading && ' · Salvando...'}
+              </span>
+              <button onClick={() => setEditMode(false)} style={{ background:`linear-gradient(135deg,${t.light},${t.border1})`, border:`1px solid ${t.border1}`, color:t.badgeColor, borderRadius:50, padding:'7px 18px', fontSize:'.82rem', fontWeight:700, cursor:'pointer', fontFamily:"'Nunito',sans-serif" }}>
+                ✓ Sair da edição
+              </button>
+            </div>
+          ) : (
+            <button onClick={() => setAuthModal(true)} style={{ background:'none', border:'none', cursor:'pointer', fontSize:'.75rem', color:'#a08898', fontFamily:"'Nunito',sans-serif", opacity:.5 }}>
+              🔒 Gerenciar fotos
+            </button>
+          )}
+        </div>
 
         {/* ── COUNTDOWN ── */}
         {timeElapsed && (
