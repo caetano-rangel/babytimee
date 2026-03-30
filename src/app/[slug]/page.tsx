@@ -28,6 +28,18 @@ const themes = {
     quoteColor:'#dbeafe', footerName:'#93c5fd',
     pageBg:'linear-gradient(180deg,#f0f7ff 0%,#e8f0fe 30%,#f0eeff 100%)',
     cor:'#3b82f6', badge:'#dbeafe', dark:'#1d4ed8',
+    ebookAccent:'#3b82f6',
+    ebookGradient:'linear-gradient(135deg,#93c5fd,#60a5fa,#3b82f6)',
+    ebookShadow:'rgba(96,165,250,0.35)',
+    ebookBadgeColor:'#1d4ed8',
+    ebookChapBg0:'linear-gradient(135deg,#dbeafe50,#ede9fe30)',
+    ebookChapBg1:'linear-gradient(135deg,#ede9fe30,#dbeafe50)',
+    ebookStatBg:'linear-gradient(135deg,#dbeafe50,#ede9fe40)',
+    ebookBtnEmoji:'💙',
+    ebookHeroBg:'linear-gradient(155deg,#e0f0ff 0%,#dbeafe 50%,#ede9fe 100%)',
+    ebookBookGradient:'linear-gradient(155deg,#60a5fa,#3b82f6,#4f46e5)',
+    ebookBookShadow:'rgba(96,165,250,0.45)',
+    ebookStatColor:'#3b82f6',
   },
   menina: {
     emoji:'💗', heroBg:'linear-gradient(155deg,#fff5f8 0%,#fce4ef 40%,#ede9fe 100%)',
@@ -41,6 +53,18 @@ const themes = {
     quoteColor:'#fce4ef', footerName:'#f9a8c9',
     pageBg:'linear-gradient(180deg,#fff5f8 0%,#fef0f7 30%,#f5f0ff 100%)',
     cor:'#e879a0', badge:'#fce4ef', dark:'#c0507a',
+    ebookAccent:'#e879a0',
+    ebookGradient:'linear-gradient(135deg,#f9a8c9,#e879a0,#d1598c)',
+    ebookShadow:'rgba(232,121,160,0.35)',
+    ebookBadgeColor:'#c0507a',
+    ebookChapBg0:'linear-gradient(135deg,#fce4ef50,#ede9fe30)',
+    ebookChapBg1:'linear-gradient(135deg,#ede9fe30,#fce4ef50)',
+    ebookStatBg:'linear-gradient(135deg,#fce4ef50,#ede9fe40)',
+    ebookBtnEmoji:'💗',
+    ebookHeroBg:'linear-gradient(155deg,#fff5f8 0%,#fce4ef 50%,#ede9fe 100%)',
+    ebookBookGradient:'linear-gradient(155deg,#f9a8c9,#e879a0,#d1598c)',
+    ebookBookShadow:'rgba(200,80,130,0.45)',
+    ebookStatColor:'#e879a0',
   },
 };
 
@@ -173,7 +197,6 @@ function GaleriaCarrossel({ fotos, tema }: { fotos: string[]; tema: Tema }) {
             }}
             style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.85)', zIndex:1000, display:'flex', alignItems:'center', justifyContent:'center', padding:20, touchAction:'pan-y' }}
           >
-            {/* Setas */}
             {len > 1 && (
               <>
                 <button onClick={(e) => { e.stopPropagation(); prev(); }} style={{ position:'absolute', left:16, top:'50%', transform:'translateY(-50%)', background:'rgba(255,255,255,0.15)', border:'none', borderRadius:'50%', width:44, height:44, fontSize:'1.4rem', color:'white', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}>‹</button>
@@ -186,7 +209,6 @@ function GaleriaCarrossel({ fotos, tema }: { fotos: string[]; tema: Tema }) {
               onClick={(e) => e.stopPropagation()}
               style={{ maxWidth:'100%', maxHeight:'90vh', borderRadius:16, objectFit:'contain', boxShadow:'0 20px 60px rgba(0,0,0,0.5)' }}
             />
-            {/* Contador */}
             {len > 1 && (
               <div style={{ position:'absolute', bottom:24, left:'50%', transform:'translateX(-50%)', color:'rgba(255,255,255,0.7)', fontSize:'0.8rem' }}>{active+1} / {len}</div>
             )}
@@ -311,6 +333,165 @@ function SignoCard({ dataNascimento, t }: { dataNascimento:string; t:Tema }) {
   );
 }
 
+/* ── Seção E-book ── */
+function EbookCard({ t, nomeBebe }: { t: Tema; nomeBebe: string }) {
+  const capitulos = [
+    { emoji: '🍼', titulo: 'Enxoval Inteligente',          sub: 'O que é essencial de verdade no começo' },
+    { emoji: '🌙', titulo: 'Sono & Segurança',              sub: 'Rotinas e ambiente seguro para dormir' },
+    { emoji: '🤱', titulo: 'Amamentação & Nutrição',        sub: 'Primeiros passos e dificuldades comuns' },
+    { emoji: '💉', titulo: 'Vacinas & Cuidados Médicos',    sub: 'Calendário, sinais de alerta e consultas' },
+  ];
+
+  return (
+    <div style={{ marginBottom: 56 }}>
+      {/* Badge */}
+      <div style={{ textAlign: 'center', marginBottom: 20 }}>
+        <span style={{ display: 'inline-block', background: `linear-gradient(135deg,${t.light},#ede9fe)`, borderRadius: 50, padding: '5px 18px', fontSize: '0.8rem', color: t.ebookBadgeColor, fontWeight: 700 }}>
+          📖 E-book gratuito para você
+        </span>
+      </div>
+
+      {/* Card container */}
+      <div style={{ background: 'white', borderRadius: 24, border: `1.5px solid ${t.border1}`, boxShadow: `0 8px 32px ${t.ebookShadow}`, overflow: 'hidden' }}>
+
+        {/* Hero interno */}
+        <div style={{ background: t.ebookHeroBg, padding: '36px 28px 28px', position: 'relative', overflow: 'hidden' }}>
+          {/* Blobs decorativos */}
+          <div style={{ position: 'absolute', top: -40, right: -40, width: 180, height: 180, background: `radial-gradient(circle,${t.blobColor1},transparent 70%)`, borderRadius: '50%', pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', bottom: -30, left: -20, width: 120, height: 120, background: `radial-gradient(circle,${t.blobColor2},transparent 70%)`, borderRadius: '50%', pointerEvents: 'none' }} />
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 24, position: 'relative' }}>
+
+            {/* Capa do ebook */}
+            <div style={{ flexShrink: 0 }}>
+              <div style={{
+                width: 88,
+                height: 118,
+                background: t.ebookBookGradient,
+                borderRadius: '6px 12px 12px 6px',
+                boxShadow: `4px 8px 24px ${t.ebookBookShadow}, inset -3px 0 8px rgba(0,0,0,0.18)`,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 6,
+                position: 'relative',
+              }}>
+                {/* Lombada */}
+                <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 7, background: 'rgba(0,0,0,0.22)', borderRadius: '6px 0 0 6px' }} />
+                {/* Brilho superior */}
+                <div style={{ position: 'absolute', top: 8, left: 14, right: 8, height: 1, background: 'rgba(255,255,255,0.3)', borderRadius: 99 }} />
+                <span style={{ fontSize: '1.5rem', filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.25))' }}>🍼</span>
+                <div style={{ textAlign: 'center', padding: '0 10px' }}>
+                  <p style={{ fontFamily: "'Playfair Display',serif", color: 'white', fontSize: '0.48rem', fontWeight: 700, lineHeight: 1.35, margin: 0, textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>Meu Primeiro Ano</p>
+                  <div style={{ width: 28, height: 1, background: 'rgba(255,255,255,0.45)', margin: '4px auto' }} />
+                  <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.36rem', margin: 0, letterSpacing: '0.06em', fontFamily: "'Nunito',sans-serif" }}>GUIA PARA MÃES</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Texto hero */}
+            <div style={{ flex: 1 }}>
+              <p style={{ fontSize: '0.7rem', color: t.ebookBadgeColor, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', margin: '0 0 6px' }}>E-book gratuito</p>
+              <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: '1.35rem', color: '#2d1b2e', lineHeight: 1.25, margin: '0 0 10px' }}>
+                Meu Primeiro Ano<br />
+                <em style={{ color: t.ebookAccent }}>— Guia para Mães de Primeira Viagem</em>
+              </h2>
+              <p style={{ fontSize: '0.82rem', color: '#a08898', lineHeight: 1.55, margin: 0 }}>
+                Tudo o que você precisa saber sobre o primeiro ano de {nomeBebe}, com carinho e leveza.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Capítulos + Stats + Botão */}
+        <div style={{ padding: '24px 28px 24px' }}>
+
+          {/* Label capítulos */}
+          <p style={{ fontSize: '0.7rem', color: '#a08898', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 12px' }}>
+            O que você vai encontrar
+          </p>
+
+          {/* Lista de capítulos */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
+            {capitulos.map((cap, i) => (
+              <div
+                key={i}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  padding: '11px 14px',
+                  borderRadius: 14,
+                  background: i % 2 === 0 ? t.ebookChapBg0 : t.ebookChapBg1,
+                  border: `1px solid ${t.border1}`,
+                  transition: 'transform 0.2s',
+                }}
+              >
+                <span style={{ fontSize: '1.1rem', flexShrink: 0 }}>{cap.emoji}</span>
+                <div>
+                  <p style={{ fontSize: '0.87rem', fontWeight: 700, color: '#2d1b2e', margin: 0, lineHeight: 1.25 }}>{cap.titulo}</p>
+                  <p style={{ fontSize: '0.73rem', color: '#a08898', margin: 0, marginTop: 1 }}>{cap.sub}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Stats */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10, marginBottom: 24 }}>
+            {[
+              { val: '10',   label: 'min de leitura'   },
+              { val: '12',   label: 'capítulos' },
+              { val: '100%', label: 'gratuito'  },
+            ].map(({ val, label }) => (
+              <div key={label} style={{ textAlign: 'center', padding: '12px 8px', background: t.ebookStatBg, borderRadius: 14, border: `1px solid ${t.border1}` }}>
+                <p style={{ fontFamily: "'Playfair Display',serif", fontSize: '1.4rem', color: t.ebookStatColor, margin: 0, lineHeight: 1 }}>{val}</p>
+                <p style={{ fontSize: '0.68rem', color: '#a08898', margin: 0, fontWeight: 600, marginTop: 3 }}>{label}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Botão download */}
+          <a href="/ebook.pdf" download style={{ display: 'block', textDecoration: 'none' }}>
+            <button
+              style={{
+                width: '100%',
+                padding: '15px',
+                borderRadius: 50,
+                border: 'none',
+                background: t.ebookGradient,
+                color: 'white',
+                fontWeight: 700,
+                fontSize: '1rem',
+                fontFamily: "'Nunito',sans-serif",
+                cursor: 'pointer',
+                boxShadow: `0 6px 22px ${t.ebookShadow}`,
+                transition: 'transform 0.2s, box-shadow 0.2s',
+                letterSpacing: '0.02em',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = `0 10px 30px ${t.ebookShadow}`;
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = `0 6px 22px ${t.ebookShadow}`;
+              }}
+            >
+              {t.ebookBtnEmoji} Baixar e-book gratuito (PDF)
+            </button>
+          </a>
+
+          {/* Nota */}
+          <p style={{ textAlign: 'center', fontSize: '0.7rem', color: '#c4b5c0', margin: '10px 0 0', fontStyle: 'italic' }}>
+            PDF leve · sem cadastro · compartilhe com quem você ama 🌸
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ── Página principal ── */
 interface PageProps { params: Promise<{ slug: string }>; }
 
@@ -319,7 +500,6 @@ const UserPage = ({ params }: PageProps) => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
   const [timeElapsed, setTimeElapsed] = useState<TimeElapsed | null>(null);
-  // Edição de fotos
   const [editMode, setEditMode]       = useState(false);
   const [authModal, setAuthModal]     = useState(false);
   const [authEmail, setAuthEmail]     = useState('');
@@ -453,7 +633,7 @@ const UserPage = ({ params }: PageProps) => {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Nunito:wght@300;400;600;700&display=swap');
         .pf { font-family: 'Playfair Display', Georgia, serif !important; }
-        @keyframes float  { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+        @keyframes float  { 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-6px) rotate(-2deg)} }
         @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
         .fade-up { animation: fadeUp .7s ease forwards; }
         .float   { animation: float 3s ease-in-out infinite; }
@@ -587,6 +767,9 @@ const UserPage = ({ params }: PageProps) => {
 
         {/* ── CURIOSIDADES ── */}
         <CuriosidadesCard dataNascimento={userData.dataNascimento} horaNascimento={userData.horaNascimento} nomeBebe={userData.nomeBebe} t={t} />
+
+        {/* ── EBOOK ── */}
+        <EbookCard t={t} nomeBebe={userData.nomeBebe} />
 
         {/* ── MENSAGEM ── */}
         <div style={{ marginBottom:56 }}>

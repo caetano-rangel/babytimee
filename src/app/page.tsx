@@ -127,6 +127,41 @@ function TestiCard({ quote, name, role, delay }: {
   );
 }
 
+/* ── Capa do E-book (estática) ── */
+function EbookCover({ size = 'lg' }: { size?: 'sm' | 'lg' }) {
+  const w = size === 'lg' ? 120 : 88;
+  const h = size === 'lg' ? 160 : 118;
+  const emoji = size === 'lg' ? '2rem' : '1.5rem';
+  const title = size === 'lg' ? '0.6rem' : '0.48rem';
+  const sub   = size === 'lg' ? '0.46rem' : '0.36rem';
+
+  return (
+    <div style={{
+      width: w, height: h,
+      background: 'linear-gradient(155deg,#f9a8c9,#e879a0,#d1598c,#a855a0)',
+      borderRadius: '6px 12px 12px 6px',
+      boxShadow: `4px 8px 28px rgba(200,80,130,0.45), inset -3px 0 8px rgba(0,0,0,0.18)`,
+      display: 'flex', flexDirection: 'column', alignItems: 'center',
+      justifyContent: 'center', gap: 6, position: 'relative', flexShrink: 0,
+    }}>
+      {/* Lombada */}
+      <div style={{ position:'absolute', left:0, top:0, bottom:0, width:7, background:'rgba(0,0,0,0.22)', borderRadius:'6px 0 0 6px' }} />
+      {/* Brilho */}
+      <div style={{ position:'absolute', top:8, left:14, right:8, height:1, background:'rgba(255,255,255,0.3)', borderRadius:99 }} />
+      <span style={{ fontSize: emoji, filter:'drop-shadow(0 1px 3px rgba(0,0,0,0.25))' }}>🍼</span>
+      <div style={{ textAlign:'center', padding:'0 10px' }}>
+        <p style={{ fontFamily:"'Playfair Display',serif", color:'white', fontSize: title, fontWeight:700, lineHeight:1.35, margin:0, textShadow:'0 1px 3px rgba(0,0,0,0.3)' }}>
+          Meu Primeiro Ano
+        </p>
+        <div style={{ width:28, height:1, background:'rgba(255,255,255,0.45)', margin:'4px auto' }} />
+        <p style={{ color:'rgba(255,255,255,0.8)', fontSize: sub, margin:0, letterSpacing:'0.06em', fontFamily:"'Nunito',sans-serif" }}>
+          GUIA PARA MÃES
+        </p>
+      </div>
+    </div>
+  );
+}
+
 const Home: React.FC = () => {
   const router = useRouter();
   const go = (path: string) => () => router.push(path);
@@ -143,6 +178,21 @@ const Home: React.FC = () => {
     fontFamily:"'Nunito',sans-serif", transition:'transform 0.3s, box-shadow 0.3s',
   };
 
+  // Badge "Mais escolhido": cores do próprio card metálico (escuro fosco com borda brilhante)
+  const premiumBadgeBg = 'linear-gradient(135deg,#3d1060,#6b1a4a,#4a0a2e)';
+  const premiumBadgeBorder = '1px solid rgba(232,121,160,0.45)';
+  // Botão Premium: violeta-roxo do site, harmonizando com as bordas metálicas do card
+  const premiumBtnGradient = 'linear-gradient(135deg,#a855f7,#7c3aed,#6d28d9)';
+  const premiumBtnShadow = '0 8px 28px rgba(124,58,237,0.5)';
+
+  const ebookCapitulos = [
+    { emoji:'🛍️', titulo:'O Enxoval Inteligente',          sub:'Só o que é essencial de verdade' },
+    { emoji:'🌙', titulo:'Sono & Segurança',                sub:'Rotinas e ambiente seguro para dormir' },
+    { emoji:'🤱', titulo:'Amamentação & Nutrição',          sub:'Primeiros passos e dificuldades comuns' },
+    { emoji:'🏠', titulo:'Adaptação & Rede de Apoio',       sub:'Rotina, ritual da noite e suporte' },
+    { emoji:'💉', titulo:'Vacinas & Cuidados Médicos',      sub:'Calendário e sinais de alerta' },
+  ];
+
   return (
     <div style={{ fontFamily:"'Nunito',sans-serif", background:'#f7fbff', color:'#2d1b2e', overflowX:'hidden' }}>
       <style>{`
@@ -150,6 +200,8 @@ const Home: React.FC = () => {
         .pf { font-family: 'Playfair Display', Georgia, serif !important; }
         .btn-blue:hover  { transform:translateY(-3px); box-shadow:0 14px 36px rgba(96,165,250,0.55) !important; }
         .btn-pink:hover  { transform:translateY(-3px); box-shadow:0 14px 36px rgba(232,121,160,0.55) !important; }
+        .btn-gold:hover  { transform:translateY(-3px); box-shadow:0 14px 36px rgba(200,146,42,0.65) !important; }
+        .eb-chap:hover   { transform:translateX(4px); }
       `}</style>
 
       {/* ── NAV ── */}
@@ -273,6 +325,141 @@ const Home: React.FC = () => {
         </div>
       </section>
 
+      {/* ── SEÇÃO EBOOK ── */}
+      <section style={{
+        padding:'88px 24px',
+        background:'linear-gradient(155deg,#f0f7ff 0%,#e8eeff 20%,#ede8f8 50%,#fce4ef 80%,#fff5f8 100%)',
+        position:'relative', overflow:'hidden',
+      }}>
+        <style>{`
+          .ebook-top-inner { display:flex; flex-wrap:wrap; align-items:center; gap:36px; position:relative; }
+          .ebook-cover-wrap { display:flex; justify-content:center; width:auto; }
+          .ebook-info { flex:1 1 260px; }
+          .ebook-body { padding:32px 40px 36px; }
+          .ebook-cta-row { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px; padding:20px 24px; background:linear-gradient(135deg,#f0f7ff,#fce4ef30); border-radius:18px; border:1.5px solid #e0eeff; }
+          .ebook-cta-btn { white-space:nowrap; }
+          .ebook-top { padding:40px 40px 32px; position:relative; overflow:hidden; background:linear-gradient(135deg,#f0f7ff,#e8eeff 50%,#fff5f8); }
+          @media (max-width: 600px) {
+            .ebook-top { padding:28px 20px 24px; }
+            .ebook-top-inner { flex-direction:column; align-items:center; gap:20px; text-align:center; }
+            .ebook-cover-wrap { width:100%; }
+            .ebook-info { flex:unset; width:100%; text-align:center; }
+            .ebook-info .eb-tags { justify-content:center; }
+            .ebook-body { padding:24px 20px 28px; }
+            .ebook-cta-row { flex-direction:column; align-items:stretch; text-align:center; padding:18px 16px; }
+            .ebook-cta-btn { width:100%; text-align:center; }
+          }
+        `}</style>
+
+        {/* Blobs decorativos — azul e rosa suaves como no hero */}
+        <div style={{ position:'absolute', top:-60, right:-60, width:320, height:320, background:'radial-gradient(circle,rgba(191,219,254,0.28),transparent 70%)', borderRadius:'50%', pointerEvents:'none' }} />
+        <div style={{ position:'absolute', bottom:-60, left:-40, width:260, height:260, background:'radial-gradient(circle,rgba(249,168,201,0.22),transparent 70%)', borderRadius:'50%', pointerEvents:'none' }} />
+
+        <div style={{ maxWidth:900, margin:'0 auto', position:'relative', zIndex:1 }}>
+
+          {/* Header da seção */}
+          <motion.div variants={fadeUp(0)} initial="hidden" whileInView="show" viewport={{ once:true }} style={{ textAlign:'center', marginBottom:56 }}>
+            <span style={{ display:'inline-block', background:'linear-gradient(135deg,#dbeafe,#fce4ef)', borderRadius:50, padding:'5px 18px', fontSize:'0.82rem', color:'#3b82f6', fontWeight:700, marginBottom:14 }}>
+              📖 Bônus exclusivo Premium
+            </span>
+            <h2 className="pf" style={{ fontSize:'clamp(1.6rem,4vw,2.3rem)', color:'#2d1b2e', fontWeight:700, lineHeight:1.2, marginBottom:12 }}>
+              E-book gratuito incluso no{' '}
+              <em style={{ color:'#e879a0' }}>plano Premium</em>
+            </h2>
+            <p style={{ color:'#6b5c6e', fontSize:'0.97rem', lineHeight:1.7, maxWidth:520, margin:'0 auto' }}>
+              Além da página do bebê, você recebe um guia completo para atravessar o primeiro ano com mais confiança e leveza.
+            </p>
+          </motion.div>
+
+          {/* Card principal do ebook */}
+          <motion.div variants={fadeUp(0.1)} initial="hidden" whileInView="show" viewport={{ once:true }}>
+            <div style={{ background:'white', borderRadius:28, border:'1.5px solid #ddd8f0', boxShadow:'0 12px 48px rgba(120,100,200,0.1)', overflow:'hidden' }}>
+
+              {/* Topo colorido */}
+              <div className="ebook-top">
+                <div style={{ position:'absolute', top:-30, right:-30, width:180, height:180, background:'radial-gradient(circle,rgba(191,219,254,0.2),transparent 70%)', borderRadius:'50%', pointerEvents:'none' }} />
+
+                <div className="ebook-top-inner">
+
+                  {/* Capa do livro */}
+                  <div className="ebook-cover-wrap">
+                    <EbookCover size="lg" />
+                  </div>
+
+                  {/* Info */}
+                  <div className="ebook-info">
+                    <div style={{ display:'inline-flex', alignItems:'center', gap:6, background:'linear-gradient(135deg,#dbeafe,#fce4ef)', borderRadius:50, padding:'4px 14px', marginBottom:14 }}>
+                      <span style={{ fontSize:'0.72rem', color:'#3b82f6', fontWeight:700 }}>📖 E-book gratuito · 52 páginas · 9 capítulos</span>
+                    </div>
+                    <h3 className="pf" style={{ fontSize:'1.7rem', color:'#2d1b2e', lineHeight:1.2, margin:'0 0 10px' }}>
+                      Meu Primeiro Ano
+                      <br />
+                      <em style={{ color:'#e879a0', fontSize:'1.3rem' }}>— Guia para Mães de Primeira Viagem</em>
+                    </h3>
+                    <p style={{ fontSize:'0.92rem', color:'#6b5c6e', lineHeight:1.65, margin:'0 0 20px' }}>
+                      Do enxoval às primeiras vacinas, do sono à amamentação — tudo o que você precisa saber nos primeiros 12 meses, sem enrolação e com muito carinho.
+                    </p>
+                    {/* Tags */}
+                    <div className="eb-tags" style={{ display:'flex', flexWrap:'wrap', gap:8 }}>
+                      {['🛍️ Enxoval', '🌙 Sono', '🤱 Amamentação', '💉 Vacinas', '❤️ Autocuidado'].map(tag => (
+                        <span key={tag} style={{ background:'linear-gradient(135deg,#dbeafe60,#fce4ef60)', border:'1px solid #e0eeff', borderRadius:50, padding:'4px 12px', fontSize:'0.75rem', color:'#3b82f6', fontWeight:600 }}>{tag}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Capítulos */}
+              <div className="ebook-body">
+                <p style={{ fontSize:'0.72rem', color:'#a08898', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', margin:'0 0 16px' }}>
+                  O que você vai encontrar
+                </p>
+
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))', gap:10, marginBottom:32 }}>
+                  {ebookCapitulos.map((cap, i) => (
+                    <div key={i} className="eb-chap" style={{
+                      display:'flex', alignItems:'center', gap:12,
+                      padding:'13px 16px', borderRadius:14,
+                      background: i % 2 === 0
+                        ? 'linear-gradient(135deg,#dbeafe40,#fce4ef20)'
+                        : 'linear-gradient(135deg,#fce4ef20,#dbeafe40)',
+                      border:'1px solid #e0eeff',
+                      transition:'transform 0.2s',
+                    }}>
+                      <span style={{ fontSize:'1.2rem', flexShrink:0 }}>{cap.emoji}</span>
+                      <div>
+                        <p style={{ fontSize:'0.88rem', fontWeight:700, color:'#2d1b2e', margin:0, lineHeight:1.25 }}>{cap.titulo}</p>
+                        <p style={{ fontSize:'0.73rem', color:'#a08898', margin:0, marginTop:2 }}>{cap.sub}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* CTA inferior */}
+                <div className="ebook-cta-row">
+                  <div>
+                    <p style={{ fontWeight:700, color:'#2d1b2e', fontSize:'1rem', margin:'0 0 3px' }}>
+                      Incluso no plano Premium 💗
+                    </p>
+                    <p style={{ fontSize:'0.82rem', color:'#a08898', margin:0 }}>
+                      PDF enviado automaticamente após a compra · sem cadastro extra
+                    </p>
+                  </div>
+                  <button onClick={go('/form?sexo=menina')} className="btn-pink ebook-cta-btn" style={{
+                    ...btnStyle,
+                    background:'linear-gradient(135deg,#f9a8c9,#e879a0,#d1598c)',
+                    boxShadow:'0 8px 24px rgba(232,121,160,0.4)',
+                    padding:'13px 28px', fontSize:'0.95rem',
+                  }}>
+                    Quero o Premium 💗
+                  </button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* ── PRICING ── */}
       <section style={{ padding:'80px 24px', background:'linear-gradient(155deg,#f0f7ff,#fce4ef30)' }}>
         <div style={{ maxWidth:820, margin:'0 auto' }}>
@@ -283,6 +470,7 @@ const Home: React.FC = () => {
           </motion.div>
 
           <div style={{ display:'flex', flexWrap:'wrap', gap:24, justifyContent:'center', alignItems:'stretch' }}>
+
             {/* Básico */}
             <motion.div variants={fadeUp(0)} initial="hidden" whileInView="show" viewport={{ once:true }}
               whileHover={{ y:-6, transition:{ duration:0.3 } }}
@@ -298,6 +486,7 @@ const Home: React.FC = () => {
                   <li style={{ fontSize:'0.93rem', display:'flex', alignItems:'center', gap:8, color:'#9ca3af' }}><span style={{ color:'#f87171' }}>✕</span> Sem música de fundo</li>
                   <li style={{ fontSize:'0.93rem', display:'flex', alignItems:'center', gap:8, color:'#9ca3af' }}><span style={{ color:'#f87171' }}>✕</span> Sem Signo</li>
                   <li style={{ fontSize:'0.93rem', display:'flex', alignItems:'center', gap:8, color:'#9ca3af' }}><span style={{ color:'#f87171' }}>✕</span> Sem Curiosidades</li>
+                  <li style={{ fontSize:'0.93rem', display:'flex', alignItems:'center', gap:8, color:'#9ca3af' }}><span style={{ color:'#f87171' }}>✕</span> Sem e-book</li>
                 </ul>
                 <button onClick={go('/form')} className="btn-blue" style={{ ...btnStyle, width:'100%', marginTop:24 }}>Começar agora</button>
               </div>
@@ -307,8 +496,16 @@ const Home: React.FC = () => {
             <motion.div variants={fadeUp(0.1)} initial="hidden" whileInView="show" viewport={{ once:true }}
               whileHover={{ y:-6, transition:{ duration:0.3 } }}
               style={{ flex:'1 1 280px', maxWidth:340, position:'relative', paddingTop:16 }}>
-              {/* Badge fora do card para não cortar */}
-              <div style={{ position:'absolute', top:0, left:'50%', transform:'translateX(-50%)', background:'linear-gradient(135deg,#e879a0,#a855f7,#3b82f6)', borderRadius:50, padding:'5px 20px', whiteSpace:'nowrap', fontSize:'0.76rem', fontWeight:700, color:'white', boxShadow:'0 4px 16px rgba(168,85,247,0.5)', zIndex:2 }}>⭐ Mais escolhido</div>
+              <div style={{
+                position:'absolute', top:0, left:'50%', transform:'translateX(-50%)',
+                background: premiumBadgeBg,
+                border: premiumBadgeBorder,
+                borderRadius:50, padding:'5px 20px', whiteSpace:'nowrap',
+                fontSize:'0.76rem', fontWeight:700,
+                color:'rgba(255,255,255,0.9)',
+                boxShadow:'0 4px 16px rgba(107,26,74,0.6)',
+                zIndex:2,
+              }}>⭐ Mais escolhido</div>
 
               <div style={{
                 borderRadius:22, padding:'42px 22px 28px', position:'relative',
@@ -316,15 +513,10 @@ const Home: React.FC = () => {
                 boxShadow:'0 20px 60px rgba(219,39,119,0.35), 0 8px 32px rgba(139,92,246,0.25), 0 0 0 1px rgba(255,255,255,0.08) inset',
                 overflow:'hidden', height:'100%', boxSizing:'border-box', display:'flex', flexDirection:'column',
               }}>
-                {/* Reflexo metálico topo */}
                 <div style={{ position:'absolute', top:0, left:0, right:0, height:80, background:'linear-gradient(180deg,rgba(255,180,200,0.12) 0%,rgba(255,150,180,0.04) 60%,transparent 100%)', borderRadius:'22px 22px 0 0', pointerEvents:'none' }} />
-                {/* Brilho lateral esquerdo rosa */}
                 <div style={{ position:'absolute', top:0, left:0, bottom:0, width:2, background:'linear-gradient(180deg,rgba(255,100,160,0.9),rgba(200,60,120,0.5),rgba(139,92,246,0.2),transparent)', borderRadius:'22px 0 0 22px', pointerEvents:'none' }} />
-                {/* Brilho lateral direito roxo/azul */}
                 <div style={{ position:'absolute', top:0, right:0, bottom:0, width:2, background:'linear-gradient(180deg,rgba(232,121,160,0.4),rgba(139,92,246,0.5),rgba(96,165,250,0.3))', borderRadius:'0 22px 22px 0', pointerEvents:'none' }} />
-                {/* Reflexo diagonal metálico */}
                 <div style={{ position:'absolute', top:-30, left:-30, width:200, height:200, background:'radial-gradient(ellipse,rgba(255,150,180,0.08),transparent 65%)', pointerEvents:'none' }} />
-                {/* Brilho fundo roxo */}
                 <div style={{ position:'absolute', bottom:-40, right:-40, width:180, height:180, background:'radial-gradient(circle,rgba(139,92,246,0.12),transparent 70%)', pointerEvents:'none' }} />
 
                 <p style={{ fontSize:'0.8rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:6, background:'linear-gradient(135deg,#e879a0,#a855f7)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>Premium</p>
@@ -345,11 +537,31 @@ const Home: React.FC = () => {
                       <span style={{ color:'#4ade80', fontWeight:700 }}>✓</span> {f}
                     </li>
                   ))}
+                  {/* Item de destaque: ebook */}
+                  <li style={{ display:'flex', alignItems:'center', gap:8, marginTop:4, padding:'10px 12px', borderRadius:12, background:'rgba(232,121,160,0.15)', border:'1px solid rgba(232,121,160,0.3)' }}>
+                    <span style={{ fontSize:'1rem', flexShrink:0 }}>📖</span>
+                    <div>
+                      <p style={{ fontSize:'0.88rem', fontWeight:700, color:'white', margin:0, lineHeight:1.2 }}>E-book gratuito incluso</p>
+                      <p style={{ fontSize:'0.72rem', color:'rgba(255,255,255,0.55)', margin:0, marginTop:2 }}>Guia para Mães de Primeira Viagem</p>
+                    </div>
+                  </li>
                 </ul>
 
-                <button onClick={go('/form?sexo=menina')} style={{ ...btnStyle, width:'100%', marginTop:24, background:'linear-gradient(135deg,#e879a0,#a855f7,#3b82f6)', boxShadow:'0 8px 28px rgba(168,85,247,0.45)', border:'none', position:'relative', overflow:'hidden' }}>
-                  <span style={{ position:'relative', zIndex:1 }}>Quero o Premium 💗</span>
-                  <div style={{ position:'absolute', inset:0, background:'linear-gradient(180deg,rgba(255,255,255,0.12) 0%,transparent 50%)', pointerEvents:'none' }} />
+                {/* Botão Premium — violeta-roxo harmonizando com as bordas metálicas do card */}
+                <button
+                  onClick={go('/form?sexo=menina')}
+                  className="btn-gold"
+                  style={{
+                    ...btnStyle,
+                    width:'100%', marginTop:24,
+                    background: premiumBtnGradient,
+                    color:'white',
+                    boxShadow: premiumBtnShadow,
+                    border:'none', position:'relative', overflow:'hidden',
+                  }}
+                >
+                  <span style={{ position:'relative', zIndex:1 }}>✨ Quero o Premium</span>
+                  <div style={{ position:'absolute', inset:0, background:'linear-gradient(180deg,rgba(255,255,255,0.18) 0%,transparent 50%)', pointerEvents:'none' }} />
                 </button>
               </div>
             </motion.div>
