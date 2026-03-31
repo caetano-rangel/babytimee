@@ -14,6 +14,15 @@ interface TimeElapsed {
   hours: number; minutes: number; seconds: number;
 }
 
+/* ── POST-IT ── */
+interface Postit {
+  id: number;
+  nome: string;
+  mensagem: string;
+  cor: string;
+  created_at: string;
+}
+
 /* ── Temas ── */
 const themes = {
   menino: {
@@ -40,6 +49,9 @@ const themes = {
     ebookBookGradient:'linear-gradient(155deg,#60a5fa,#3b82f6,#4f46e5)',
     ebookBookShadow:'rgba(96,165,250,0.45)',
     ebookStatColor:'#3b82f6',
+    postitBtnBg:'linear-gradient(135deg,#93c5fd,#60a5fa,#3b82f6)',
+    postitBtnText:'white',
+    postitBtnShadow:'rgba(96,165,250,0.4)',
   },
   menina: {
     emoji:'💗', heroBg:'linear-gradient(155deg,#fff5f8 0%,#fce4ef 40%,#ede9fe 100%)',
@@ -65,6 +77,9 @@ const themes = {
     ebookBookGradient:'linear-gradient(155deg,#f9a8c9,#e879a0,#d1598c)',
     ebookBookShadow:'rgba(200,80,130,0.45)',
     ebookStatColor:'#e879a0',
+    postitBtnBg:'linear-gradient(135deg,#f9a8c9,#e879a0,#d1598c)',
+    postitBtnText:'white',
+    postitBtnShadow:'rgba(232,121,160,0.4)',
   },
 };
 
@@ -190,10 +205,7 @@ function GaleriaCarrossel({ fotos, tema }: { fotos: string[]; tema: Tema }) {
             onPointerDown={(e) => { lbStartX.current = e.clientX; }}
             onPointerUp={(e) => {
               const dx = e.clientX - lbStartX.current;
-              if (Math.abs(dx) > 40) {
-                e.stopPropagation();
-                if (dx < 0) next(); else prev();
-              }
+              if (Math.abs(dx) > 40) { e.stopPropagation(); if (dx < 0) next(); else prev(); }
             }}
             style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.85)', zIndex:1000, display:'flex', alignItems:'center', justifyContent:'center', padding:20, touchAction:'pan-y' }}
           >
@@ -203,12 +215,7 @@ function GaleriaCarrossel({ fotos, tema }: { fotos: string[]; tema: Tema }) {
                 <button onClick={(e) => { e.stopPropagation(); next(); }} style={{ position:'absolute', right:16, top:'50%', transform:'translateY(-50%)', background:'rgba(255,255,255,0.15)', border:'none', borderRadius:'50%', width:44, height:44, fontSize:'1.4rem', color:'white', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}>›</button>
               </>
             )}
-            <img
-              src={fotos[active]}
-              alt="Foto ampliada"
-              onClick={(e) => e.stopPropagation()}
-              style={{ maxWidth:'100%', maxHeight:'90vh', borderRadius:16, objectFit:'contain', boxShadow:'0 20px 60px rgba(0,0,0,0.5)' }}
-            />
+            <img src={fotos[active]} alt="Foto ampliada" onClick={(e) => e.stopPropagation()} style={{ maxWidth:'100%', maxHeight:'90vh', borderRadius:16, objectFit:'contain', boxShadow:'0 20px 60px rgba(0,0,0,0.5)' }} />
             {len > 1 && (
               <div style={{ position:'absolute', bottom:24, left:'50%', transform:'translateX(-50%)', color:'rgba(255,255,255,0.7)', fontSize:'0.8rem' }}>{active+1} / {len}</div>
             )}
@@ -256,8 +263,8 @@ function getSigno(dataNascimento: string): ZodiacSign {
 function getCuriosidades(dataNascimento: string, horaNascimento: string) {
   const birth = new Date(`${dataNascimento}T${horaNascimento}`);
   const now = new Date();
-  const diffMs   = now.getTime() - birth.getTime();
-  const diffDias = diffMs / (1000*60*60*24);
+  const diffMs      = now.getTime() - birth.getTime();
+  const diffDias    = diffMs / (1000*60*60*24);
   const diffHoras   = diffMs / (1000*60*60);
   const diffMinutos = diffMs / (1000*60);
   const diffAnos    = diffDias / 365.25;
@@ -334,160 +341,255 @@ function SignoCard({ dataNascimento, t }: { dataNascimento:string; t:Tema }) {
 }
 
 /* ── Seção E-book ── */
-function EbookCard({ t, nomeBebe }: { t: Tema; nomeBebe: string }) {
+function EbookCard({ t, nomeBebe, onDownload }: { t: Tema; nomeBebe: string; onDownload: () => void }) {
   const capitulos = [
-    { emoji: '🍼', titulo: 'Enxoval Inteligente',          sub: 'O que é essencial de verdade no começo' },
-    { emoji: '🌙', titulo: 'Sono & Segurança',              sub: 'Rotinas e ambiente seguro para dormir' },
-    { emoji: '🤱', titulo: 'Amamentação & Nutrição',        sub: 'Primeiros passos e dificuldades comuns' },
-    { emoji: '💉', titulo: 'Vacinas & Cuidados Médicos',    sub: 'Calendário, sinais de alerta e consultas' },
+    { emoji:'🍼', titulo:'Enxoval Inteligente',       sub:'O que é essencial de verdade no começo' },
+    { emoji:'🌙', titulo:'Sono & Segurança',           sub:'Rotinas e ambiente seguro para dormir' },
+    { emoji:'🤱', titulo:'Amamentação & Nutrição',     sub:'Primeiros passos e dificuldades comuns' },
+    { emoji:'💉', titulo:'Vacinas & Cuidados Médicos', sub:'Calendário, sinais de alerta e consultas' },
   ];
-
   return (
-    <div style={{ marginBottom: 56 }}>
-      {/* Badge */}
-      <div style={{ textAlign: 'center', marginBottom: 20 }}>
-        <span style={{ display: 'inline-block', background: `linear-gradient(135deg,${t.light},#ede9fe)`, borderRadius: 50, padding: '5px 18px', fontSize: '0.8rem', color: t.ebookBadgeColor, fontWeight: 700 }}>
-          📖 E-book gratuito para você
-        </span>
+    <div style={{ marginBottom:56 }}>
+      <div style={{ textAlign:'center', marginBottom:20 }}>
+        <span style={{ display:'inline-block', background:`linear-gradient(135deg,${t.light},#ede9fe)`, borderRadius:50, padding:'5px 18px', fontSize:'0.8rem', color:t.ebookBadgeColor, fontWeight:700 }}>📖 E-book gratuito para você</span>
       </div>
-
-      {/* Card container */}
-      <div style={{ background: 'white', borderRadius: 24, border: `1.5px solid ${t.border1}`, boxShadow: `0 8px 32px ${t.ebookShadow}`, overflow: 'hidden' }}>
-
-        {/* Hero interno */}
-        <div style={{ background: t.ebookHeroBg, padding: '36px 28px 28px', position: 'relative', overflow: 'hidden' }}>
-          {/* Blobs decorativos */}
-          <div style={{ position: 'absolute', top: -40, right: -40, width: 180, height: 180, background: `radial-gradient(circle,${t.blobColor1},transparent 70%)`, borderRadius: '50%', pointerEvents: 'none' }} />
-          <div style={{ position: 'absolute', bottom: -30, left: -20, width: 120, height: 120, background: `radial-gradient(circle,${t.blobColor2},transparent 70%)`, borderRadius: '50%', pointerEvents: 'none' }} />
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: 24, position: 'relative' }}>
-
-            {/* Capa do ebook */}
-            <div style={{ flexShrink: 0 }}>
-              <div style={{
-                width: 88,
-                height: 118,
-                background: t.ebookBookGradient,
-                borderRadius: '6px 12px 12px 6px',
-                boxShadow: `4px 8px 24px ${t.ebookBookShadow}, inset -3px 0 8px rgba(0,0,0,0.18)`,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 6,
-                position: 'relative',
-              }}>
-                {/* Lombada */}
-                <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 7, background: 'rgba(0,0,0,0.22)', borderRadius: '6px 0 0 6px' }} />
-                {/* Brilho superior */}
-                <div style={{ position: 'absolute', top: 8, left: 14, right: 8, height: 1, background: 'rgba(255,255,255,0.3)', borderRadius: 99 }} />
-                <span style={{ fontSize: '1.5rem', filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.25))' }}>🍼</span>
-                <div style={{ textAlign: 'center', padding: '0 10px' }}>
-                  <p style={{ fontFamily: "'Playfair Display',serif", color: 'white', fontSize: '0.48rem', fontWeight: 700, lineHeight: 1.35, margin: 0, textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>Meu Primeiro Ano</p>
-                  <div style={{ width: 28, height: 1, background: 'rgba(255,255,255,0.45)', margin: '4px auto' }} />
-                  <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.36rem', margin: 0, letterSpacing: '0.06em', fontFamily: "'Nunito',sans-serif" }}>GUIA PARA MÃES</p>
+      <div style={{ background:'white', borderRadius:24, border:`1.5px solid ${t.border1}`, boxShadow:`0 8px 32px ${t.ebookShadow}`, overflow:'hidden' }}>
+        <div style={{ background:t.ebookHeroBg, padding:'36px 28px 28px', position:'relative', overflow:'hidden' }}>
+          <div style={{ position:'absolute', top:-40, right:-40, width:180, height:180, background:`radial-gradient(circle,${t.blobColor1},transparent 70%)`, borderRadius:'50%', pointerEvents:'none' }} />
+          <div style={{ position:'absolute', bottom:-30, left:-20, width:120, height:120, background:`radial-gradient(circle,${t.blobColor2},transparent 70%)`, borderRadius:'50%', pointerEvents:'none' }} />
+          <div style={{ display:'flex', alignItems:'center', gap:24, position:'relative' }}>
+            <div style={{ flexShrink:0 }}>
+              <div style={{ width:88, height:118, background:t.ebookBookGradient, borderRadius:'6px 12px 12px 6px', boxShadow:`4px 8px 24px ${t.ebookBookShadow}, inset -3px 0 8px rgba(0,0,0,0.18)`, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:6, position:'relative' }}>
+                <div style={{ position:'absolute', left:0, top:0, bottom:0, width:7, background:'rgba(0,0,0,0.22)', borderRadius:'6px 0 0 6px' }} />
+                <div style={{ position:'absolute', top:8, left:14, right:8, height:1, background:'rgba(255,255,255,0.3)', borderRadius:99 }} />
+                <span style={{ fontSize:'1.5rem', filter:'drop-shadow(0 1px 3px rgba(0,0,0,0.25))' }}>🍼</span>
+                <div style={{ textAlign:'center', padding:'0 10px' }}>
+                  <p style={{ fontFamily:"'Playfair Display',serif", color:'white', fontSize:'0.48rem', fontWeight:700, lineHeight:1.35, margin:0, textShadow:'0 1px 3px rgba(0,0,0,0.3)' }}>Meu Primeiro Ano</p>
+                  <div style={{ width:28, height:1, background:'rgba(255,255,255,0.45)', margin:'4px auto' }} />
+                  <p style={{ color:'rgba(255,255,255,0.8)', fontSize:'0.36rem', margin:0, letterSpacing:'0.06em', fontFamily:"'Nunito',sans-serif" }}>GUIA PARA MÃES</p>
                 </div>
               </div>
             </div>
-
-            {/* Texto hero */}
-            <div style={{ flex: 1 }}>
-              <p style={{ fontSize: '0.7rem', color: t.ebookBadgeColor, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', margin: '0 0 6px' }}>E-book gratuito</p>
-              <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: '1.35rem', color: '#2d1b2e', lineHeight: 1.25, margin: '0 0 10px' }}>
+            <div style={{ flex:1 }}>
+              <p style={{ fontSize:'0.7rem', color:t.ebookBadgeColor, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.12em', margin:'0 0 6px' }}>E-book gratuito</p>
+              <h2 style={{ fontFamily:"'Playfair Display',serif", fontSize:'1.35rem', color:'#2d1b2e', lineHeight:1.25, margin:'0 0 10px' }}>
                 Meu Primeiro Ano<br />
-                <em style={{ color: t.ebookAccent }}>— Guia para Mães de Primeira Viagem</em>
+                <em style={{ color:t.ebookAccent }}>— Guia para Mães de Primeira Viagem</em>
               </h2>
-              <p style={{ fontSize: '0.82rem', color: '#a08898', lineHeight: 1.55, margin: 0 }}>
+              <p style={{ fontSize:'0.82rem', color:'#a08898', lineHeight:1.55, margin:0 }}>
                 Tudo o que você precisa saber sobre o primeiro ano de {nomeBebe}, com carinho e leveza.
               </p>
             </div>
           </div>
         </div>
-
-        {/* Capítulos + Stats + Botão */}
-        <div style={{ padding: '24px 28px 24px' }}>
-
-          {/* Label capítulos */}
-          <p style={{ fontSize: '0.7rem', color: '#a08898', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 12px' }}>
-            O que você vai encontrar
-          </p>
-
-          {/* Lista de capítulos */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
+        <div style={{ padding:'24px 28px 24px' }}>
+          <p style={{ fontSize:'0.7rem', color:'#a08898', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', margin:'0 0 12px' }}>O que você vai encontrar</p>
+          <div style={{ display:'flex', flexDirection:'column', gap:8, marginBottom:20 }}>
             {capitulos.map((cap, i) => (
-              <div
-                key={i}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 12,
-                  padding: '11px 14px',
-                  borderRadius: 14,
-                  background: i % 2 === 0 ? t.ebookChapBg0 : t.ebookChapBg1,
-                  border: `1px solid ${t.border1}`,
-                  transition: 'transform 0.2s',
-                }}
-              >
-                <span style={{ fontSize: '1.1rem', flexShrink: 0 }}>{cap.emoji}</span>
+              <div key={i} style={{ display:'flex', alignItems:'center', gap:12, padding:'11px 14px', borderRadius:14, background:i%2===0?t.ebookChapBg0:t.ebookChapBg1, border:`1px solid ${t.border1}` }}>
+                <span style={{ fontSize:'1.1rem', flexShrink:0 }}>{cap.emoji}</span>
                 <div>
-                  <p style={{ fontSize: '0.87rem', fontWeight: 700, color: '#2d1b2e', margin: 0, lineHeight: 1.25 }}>{cap.titulo}</p>
-                  <p style={{ fontSize: '0.73rem', color: '#a08898', margin: 0, marginTop: 1 }}>{cap.sub}</p>
+                  <p style={{ fontSize:'0.87rem', fontWeight:700, color:'#2d1b2e', margin:0, lineHeight:1.25 }}>{cap.titulo}</p>
+                  <p style={{ fontSize:'0.73rem', color:'#a08898', margin:0, marginTop:1 }}>{cap.sub}</p>
                 </div>
               </div>
             ))}
           </div>
-
-          {/* Stats */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10, marginBottom: 24 }}>
-            {[
-              { val: '10',   label: 'min de leitura'   },
-              { val: '12',   label: 'capítulos' },
-              { val: '100%', label: 'gratuito'  },
-            ].map(({ val, label }) => (
-              <div key={label} style={{ textAlign: 'center', padding: '12px 8px', background: t.ebookStatBg, borderRadius: 14, border: `1px solid ${t.border1}` }}>
-                <p style={{ fontFamily: "'Playfair Display',serif", fontSize: '1.4rem', color: t.ebookStatColor, margin: 0, lineHeight: 1 }}>{val}</p>
-                <p style={{ fontSize: '0.68rem', color: '#a08898', margin: 0, fontWeight: 600, marginTop: 3 }}>{label}</p>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10, marginBottom:24 }}>
+            {[{ val:'10', label:'min de leitura' },{ val:'12', label:'capítulos' },{ val:'100%', label:'gratuito' }].map(({ val, label }) => (
+              <div key={label} style={{ textAlign:'center', padding:'12px 8px', background:t.ebookStatBg, borderRadius:14, border:`1px solid ${t.border1}` }}>
+                <p style={{ fontFamily:"'Playfair Display',serif", fontSize:'1.4rem', color:t.ebookStatColor, margin:0, lineHeight:1 }}>{val}</p>
+                <p style={{ fontSize:'0.68rem', color:'#a08898', margin:0, fontWeight:600, marginTop:3 }}>{label}</p>
               </div>
             ))}
           </div>
 
-          {/* Botão download */}
-          <a href="/ebook.pdf" download style={{ display: 'block', textDecoration: 'none' }}>
-            <button
-              style={{
-                width: '100%',
-                padding: '15px',
-                borderRadius: 50,
-                border: 'none',
-                background: t.ebookGradient,
-                color: 'white',
-                fontWeight: 700,
-                fontSize: '1rem',
-                fontFamily: "'Nunito',sans-serif",
-                cursor: 'pointer',
-                boxShadow: `0 6px 22px ${t.ebookShadow}`,
-                transition: 'transform 0.2s, box-shadow 0.2s',
-                letterSpacing: '0.02em',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = `0 10px 30px ${t.ebookShadow}`;
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = `0 6px 22px ${t.ebookShadow}`;
-              }}
-            >
-              {t.ebookBtnEmoji} Baixar e-book gratuito (PDF)
-            </button>
-          </a>
-
-          {/* Nota */}
-          <p style={{ textAlign: 'center', fontSize: '0.7rem', color: '#c4b5c0', margin: '10px 0 0', fontStyle: 'italic' }}>
-            PDF leve · sem cadastro · compartilhe com quem você ama 🌸
-          </p>
+          {/* Botão chama o modal de autenticação ao invés de baixar direto */}
+          <button
+            onClick={onDownload}
+            style={{
+              width:'100%', padding:'15px', borderRadius:50, border:'none',
+              background:t.ebookGradient, color:'white', fontWeight:700,
+              fontSize:'1rem', fontFamily:"'Nunito',sans-serif", cursor:'pointer',
+              boxShadow:`0 6px 22px ${t.ebookShadow}`,
+              transition:'transform 0.2s, box-shadow 0.2s', letterSpacing:'0.02em',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow=`0 10px 30px ${t.ebookShadow}`; }}
+            onMouseLeave={e => { e.currentTarget.style.transform='translateY(0)'; e.currentTarget.style.boxShadow=`0 6px 22px ${t.ebookShadow}`; }}
+          >
+            {t.ebookBtnEmoji} Baixar e-book gratuito (PDF)
+          </button>
+          <p style={{ textAlign:'center', fontSize:'0.7rem', color:'#c4b5c0', margin:'10px 0 0', fontStyle:'italic' }}>PDF leve · sem cadastro · compartilhe com quem você ama 🌸</p>
         </div>
       </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════
+   ── SEÇÃO DE POST-ITS ──
+══════════════════════════════════════════════ */
+function PostitsSection({ slug, nomeBebe, t }: { slug: string; nomeBebe: string; t: Tema }) {
+  const [postits, setPostits]     = useState<Postit[]>([]);
+  const [loading, setLoading]     = useState(true);
+  const [showForm, setShowForm]   = useState(false);
+  const [nome, setNome]           = useState('');
+  const [msg, setMsg]             = useState('');
+  const [cor, setCor]             = useState('amarelo');
+  const [sending, setSending]     = useState(false);
+  const [erro, setErro]           = useState('');
+
+  const CORES = [
+    { id:'amarelo', bg:'#fef08a' },
+    { id:'rosa',    bg:'#f9a8d4' },
+    { id:'verde',   bg:'#86efac' },
+    { id:'azul',    bg:'#93c5fd' },
+    { id:'roxo',    bg:'#d8b4fe' },
+    { id:'laranja', bg:'#fdba74' },
+  ];
+
+  const COR_MAP: Record<string, [string, string]> = {
+    amarelo: ['#fef08a', '#713f12'],
+    rosa:    ['#f9a8d4', '#831843'],
+    verde:   ['#86efac', '#14532d'],
+    azul:    ['#93c5fd', '#1e3a8a'],
+    roxo:    ['#d8b4fe', '#3b0764'],
+    laranja: ['#fdba74', '#7c2d12'],
+  };
+
+  const ROT = [-2, 1.5, -1, 2, -0.5, 1];
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res  = await fetch(`/api/baby-postits?slug=${slug}`);
+        const data = await res.json();
+        if (data.postits) setPostits(data.postits);
+      } finally { setLoading(false); }
+    })();
+  }, [slug]);
+
+  const enviar = async () => {
+    if (!msg.trim()) { setErro('Escreva uma mensagem.'); return; }
+    setSending(true); setErro('');
+    try {
+      const res  = await fetch('/api/baby-postits', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slug, nome, mensagem: msg, cor }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setErro(data.error || 'Erro ao enviar.'); return; }
+      setPostits(p => [data.postit, ...p]);
+      setMsg(''); setNome(''); setShowForm(false);
+    } catch { setErro('Erro de conexão.'); }
+    finally { setSending(false); }
+  };
+
+  return (
+    <div style={{ marginBottom:56 }}>
+      <div style={{ textAlign:'center', marginBottom:20 }}>
+        <span style={{ display:'inline-block', background:`linear-gradient(135deg,${t.light},#ede9fe)`, borderRadius:50, padding:'5px 18px', fontSize:'0.8rem', color:t.badgeColor, fontWeight:700 }}>
+          📌 Recados para {nomeBebe}
+        </span>
+      </div>
+      <p style={{ textAlign:'center', fontSize:'0.88rem', color:'#a08898', marginBottom:20, lineHeight:1.6 }}>
+        Deixe um recado carinhoso — {nomeBebe} vai guardar para sempre {t.emoji}
+      </p>
+      {!showForm && (
+        <div style={{ textAlign:'center', marginBottom:24 }}>
+          <button
+            onClick={() => setShowForm(true)}
+            style={{ background:t.postitBtnBg, border:'none', borderRadius:50, padding:'13px 32px', cursor:'pointer', color:t.postitBtnText, fontWeight:700, fontSize:'0.95rem', fontFamily:"'Nunito',sans-serif", boxShadow:`0 6px 22px ${t.postitBtnShadow}`, transition:'transform .2s, box-shadow .2s' }}
+            onMouseEnter={e => { e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow=`0 10px 30px ${t.postitBtnShadow}`; }}
+            onMouseLeave={e => { e.currentTarget.style.transform='translateY(0)'; e.currentTarget.style.boxShadow=`0 6px 22px ${t.postitBtnShadow}`; }}
+          >
+            ✍️ Escrever recado
+          </button>
+        </div>
+      )}
+      {showForm && (
+        <div style={{ background:'white', borderRadius:22, padding:'24px', border:`1.5px solid ${t.border1}`, boxShadow:`0 8px 32px ${t.shadow}`, marginBottom:24 }}>
+          <div style={{ display:'flex', gap:8, marginBottom:14, flexWrap:'wrap', alignItems:'center' }}>
+            <span style={{ fontSize:'0.78rem', color:'#a08898', marginRight:4, fontWeight:600 }}>Cor do papel:</span>
+            {CORES.map(c => (
+              <button key={c.id} type="button" onClick={() => setCor(c.id)} style={{
+                width:28, height:28, borderRadius:'50%', border:'none', cursor:'pointer',
+                background:c.bg,
+                outline: cor===c.id ? '3px solid rgba(100,100,100,.45)' : '2px solid transparent',
+                outlineOffset:2,
+                transform: cor===c.id ? 'scale(1.2)' : 'scale(1)',
+                transition:'all .2s',
+                boxShadow:'0 2px 8px rgba(0,0,0,.15)',
+              }} />
+            ))}
+          </div>
+          <input
+            type="text"
+            placeholder="Seu nome"
+            value={nome}
+            onChange={e => setNome(e.target.value)}
+            style={{ width:'100%', padding:'11px 14px', borderRadius:12, border:`1.5px solid ${t.border1}`, fontSize:'0.9rem', fontFamily:"'Nunito',sans-serif", outline:'none', marginBottom:10, boxSizing:'border-box', color:'#2d1b2e' } as React.CSSProperties}
+          />
+          <textarea
+            placeholder={`Escreva seu recado para ${nomeBebe}... (máx. 200 caracteres)`}
+            value={msg}
+            onChange={e => { setMsg(e.target.value.slice(0,200)); setErro(''); }}
+            rows={3}
+            style={{ width:'100%', padding:'11px 14px', borderRadius:12, border:`1.5px solid ${t.border1}`, fontSize:'0.9rem', fontFamily:"'Nunito',sans-serif", outline:'none', resize:'none', boxSizing:'border-box', marginBottom:6, color:'#2d1b2e' } as React.CSSProperties}
+          />
+          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:14 }}>
+            <span style={{ fontSize:'0.72rem', color:'#a08898' }}>{msg.length}/200</span>
+            {erro && <span style={{ fontSize:'0.75rem', color:t.primary, fontWeight:600 }}>{erro}</span>}
+          </div>
+          <div style={{ display:'flex', gap:10 }}>
+            <button
+              onClick={() => { setShowForm(false); setMsg(''); setNome(''); setErro(''); }}
+              style={{ flex:1, padding:'11px', background:'#f7f3f5', border:`1px solid ${t.border1}`, borderRadius:50, cursor:'pointer', color:'#a08898', fontWeight:700, fontSize:'0.88rem', fontFamily:"'Nunito',sans-serif" }}
+            >Cancelar</button>
+            <button
+              onClick={enviar}
+              disabled={sending}
+              style={{ flex:2, padding:'11px', background:t.postitBtnBg, border:'none', borderRadius:50, cursor:sending?'wait':'pointer', color:t.postitBtnText, fontWeight:700, fontSize:'0.9rem', fontFamily:"'Nunito',sans-serif", boxShadow:`0 4px 14px ${t.postitBtnShadow}` }}
+            >{sending ? 'Enviando...' : '📌 Colar recado'}</button>
+          </div>
+        </div>
+      )}
+      {loading ? (
+        <div style={{ textAlign:'center', padding:'24px', opacity:.5 }}>
+          <p style={{ fontSize:'0.88rem', color:'#a08898' }}>Carregando recados...</p>
+        </div>
+      ) : postits.length > 0 ? (
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(148px,1fr))', gap:14 }}>
+          {postits.map((pt, i) => {
+            const [bg, txt] = COR_MAP[pt.cor] || COR_MAP['amarelo'];
+            const rot = ROT[i % ROT.length];
+            return (
+              <div
+                key={pt.id}
+                style={{ background:bg, borderRadius:3, padding:'14px 12px 18px', transform:`rotate(${rot}deg)`, boxShadow:'3px 4px 12px rgba(0,0,0,.18), 0 1px 2px rgba(0,0,0,.08)', position:'relative', transition:'transform .2s, box-shadow .2s' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform='rotate(0deg) scale(1.04)'; (e.currentTarget as HTMLDivElement).style.boxShadow='4px 8px 20px rgba(0,0,0,.22)'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform=`rotate(${rot}deg)`; (e.currentTarget as HTMLDivElement).style.boxShadow='3px 4px 12px rgba(0,0,0,.18)'; }}
+              >
+                <div style={{ position:'absolute', top:-8, left:'50%', transform:'translateX(-50%)', width:40, height:16, background:'rgba(255,255,255,.5)', borderRadius:2, boxShadow:'0 1px 3px rgba(0,0,0,.08)' }} />
+                <p style={{ fontFamily:"'Kalam',cursive", fontSize:'13px', color:txt, lineHeight:1.65, marginBottom:10, marginTop:4 }}>
+                  {pt.mensagem}
+                </p>
+                {pt.nome && pt.nome !== 'Anônimo' && (
+                  <span style={{ fontFamily:"'Kalam',cursive", fontSize:'11px', color:txt, opacity:.65 }}>
+                    — {pt.nome}
+                  </span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div style={{ textAlign:'center', padding:'32px 20px', background:'white', borderRadius:18, border:`1.5px dashed ${t.border1}` }}>
+          <div style={{ fontSize:32, marginBottom:8 }}>🏷️</div>
+          <p style={{ fontSize:'0.88rem', color:'#a08898' }}>Nenhum recado ainda. Seja o primeiro! {t.emoji}</p>
+        </div>
+      )}
     </div>
   );
 }
@@ -507,6 +609,12 @@ const UserPage = ({ params }: PageProps) => {
   const [authLoading, setAuthLoading] = useState(false);
   const [editLoading, setEditLoading] = useState(false);
   const [fotosEdit, setFotosEdit]     = useState<string[]>([]);
+
+  /* ── Estados do modal de e-book ── */
+  const [ebookModal, setEbookModal]     = useState(false);
+  const [ebookEmail, setEbookEmail]     = useState('');
+  const [ebookError, setEbookError]     = useState('');
+  const [ebookLoading, setEbookLoading] = useState(false);
 
   const t = userData ? themes[userData.sexo ?? 'menina'] : themes.menina;
 
@@ -556,6 +664,7 @@ const UserPage = ({ params }: PageProps) => {
     return () => document.removeEventListener('click', handler);
   }, [userData]);
 
+  /* ── Auth: gerenciar fotos ── */
   const handleAuth = async () => {
     if (!authEmail.trim()) { setAuthError('Digite seu email.'); return; }
     setAuthLoading(true); setAuthError('');
@@ -569,6 +678,29 @@ const UserPage = ({ params }: PageProps) => {
       setEditMode(true);
     } catch { setAuthError('Erro de conexão.'); }
     finally { setAuthLoading(false); }
+  };
+
+  /* ── Auth: baixar e-book ── */
+  const handleEbookAuth = async () => {
+    if (!ebookEmail.trim()) { setEbookError('Digite seu email.'); return; }
+    setEbookLoading(true); setEbookError('');
+    try {
+      const fd = new FormData();
+      fd.append('slug', slug!);
+      fd.append('email', ebookEmail);
+      fd.append('action', 'validate');
+      const res = await fetch('/api/edit-photos', { method: 'POST', body: fd });
+      if (res.status === 401) { setEbookError('Email incorreto. Tente novamente.'); return; }
+      if (res.status === 404) { setEbookError('Página não encontrada.'); return; }
+      // Autenticado — dispara o download e fecha o modal
+      const link = document.createElement('a');
+      link.href = '/ebook.pdf';
+      link.download = 'Meu-Primeiro-Ano.pdf';
+      link.click();
+      setEbookModal(false);
+      setEbookEmail('');
+    } catch { setEbookError('Erro de conexão.'); }
+    finally { setEbookLoading(false); }
   };
 
   const handleRemoveFoto = async (url: string) => {
@@ -631,7 +763,7 @@ const UserPage = ({ params }: PageProps) => {
   return (
     <div style={{ fontFamily:"'Nunito',sans-serif", minHeight:'100vh', background:t.pageBg, color:'#2d1b2e', overflowX:'hidden' }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Nunito:wght@300;400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Nunito:wght@300;400;600;700&family=Kalam:wght@300;400&display=swap');
         .pf { font-family: 'Playfair Display', Georgia, serif !important; }
         @keyframes float  { 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-6px) rotate(-2deg)} }
         @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
@@ -641,26 +773,92 @@ const UserPage = ({ params }: PageProps) => {
 
       {userData.plano === 'sempre' && <audio id="bg-audio" loop><source src="/rugrats.mp3" type="audio/mp3"/></audio>}
 
-      {/* ── MODAL AUTH ── */}
+      {/* ══════════════════════════════
+          MODAL — Gerenciar fotos
+      ══════════════════════════════ */}
       {authModal && (
-        <div onClick={() => setAuthModal(false)} style={{ position:'fixed', inset:0, zIndex:999, background:'rgba(0,0,0,.6)', display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}>
-          <div onClick={e => e.stopPropagation()} style={{ background:'white', borderRadius:24, padding:'40px 32px', maxWidth:400, width:'100%', boxShadow:'0 24px 80px rgba(0,0,0,.2)' }}>
+        <div
+          onClick={() => setAuthModal(false)}
+          style={{ position:'fixed', inset:0, zIndex:999, background:'rgba(0,0,0,.6)', display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{ background:'white', borderRadius:24, padding:'40px 32px', maxWidth:400, width:'100%', boxShadow:'0 24px 80px rgba(0,0,0,.2)' }}
+          >
             <h2 className="pf" style={{ fontSize:'1.4rem', color:'#2d1b2e', marginBottom:8 }}>Gerenciar fotos</h2>
             <p style={{ fontSize:'.88rem', color:'#a08898', marginBottom:24, lineHeight:1.5 }}>
               Digite o email usado na criação da página para entrar no modo de edição.
             </p>
             <input
-              type="email" value={authEmail}
+              type="email"
+              value={authEmail}
               onChange={e => { setAuthEmail(e.target.value); setAuthError(''); }}
               placeholder="seu@email.com"
               onKeyDown={e => e.key === 'Enter' && handleAuth()}
-              style={{ width:'100%', padding:'12px 16px', borderRadius:14, border:`1.5px solid ${authError ? '#f87171' : t.border1}`, fontSize:'.97rem', fontFamily:"'Nunito',sans-serif", outline:'none', marginBottom:8, boxSizing:'border-box' }}
+              style={{ width:'100%', padding:'12px 16px', borderRadius:14, border:`1.5px solid ${authError ? '#f87171' : t.border1}`, fontSize:'.97rem', fontFamily:"'Nunito',sans-serif", outline:'none', marginBottom:8, boxSizing:'border-box' } as React.CSSProperties}
             />
             {authError && <p style={{ color:'#ef4444', fontSize:'.78rem', marginBottom:8 }}>{authError}</p>}
-            <button onClick={handleAuth} disabled={authLoading}
-              style={{ width:'100%', padding:'13px', borderRadius:50, border:'none', background:t.gradient, color:'white', fontWeight:700, fontSize:'1rem', cursor: authLoading ? 'wait' : 'pointer', fontFamily:"'Nunito',sans-serif", marginTop:4 }}>
+            <button
+              onClick={handleAuth}
+              disabled={authLoading}
+              style={{ width:'100%', padding:'13px', borderRadius:50, border:'none', background:t.gradient, color:'white', fontWeight:700, fontSize:'1rem', cursor: authLoading ? 'wait' : 'pointer', fontFamily:"'Nunito',sans-serif", marginTop:4 }}
+            >
               {authLoading ? 'Verificando...' : 'Entrar no modo de edição'}
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════
+          MODAL — Baixar e-book
+      ══════════════════════════════ */}
+      {ebookModal && (
+        <div
+          onClick={() => { setEbookModal(false); setEbookEmail(''); setEbookError(''); }}
+          style={{ position:'fixed', inset:0, zIndex:999, background:'rgba(0,0,0,.6)', display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{ background:'white', borderRadius:24, padding:'40px 32px', maxWidth:400, width:'100%', boxShadow:'0 24px 80px rgba(0,0,0,.2)' }}
+          >
+            <div style={{ fontSize:40, textAlign:'center', marginBottom:12 }}>📖</div>
+            <h2 className="pf" style={{ fontSize:'1.4rem', color:'#2d1b2e', marginBottom:8, textAlign:'center' }}>
+              Baixar e-book gratuito
+            </h2>
+            <p style={{ fontSize:'.88rem', color:'#a08898', marginBottom:24, lineHeight:1.5, textAlign:'center' }}>
+              Digite o email usado na criação da página de <strong>{userData.nomeBebe}</strong> para liberar o download.
+            </p>
+            <input
+              type="email"
+              value={ebookEmail}
+              onChange={e => { setEbookEmail(e.target.value); setEbookError(''); }}
+              placeholder="seu@email.com"
+              onKeyDown={e => e.key === 'Enter' && handleEbookAuth()}
+              style={{
+                width:'100%', padding:'12px 16px', borderRadius:14,
+                border:`1.5px solid ${ebookError ? '#f87171' : t.border1}`,
+                fontSize:'.97rem', fontFamily:"'Nunito',sans-serif",
+                outline:'none', marginBottom:8, boxSizing:'border-box',
+              } as React.CSSProperties}
+            />
+            {ebookError && (
+              <p style={{ color:'#ef4444', fontSize:'.78rem', marginBottom:8 }}>{ebookError}</p>
+            )}
+            <button
+              onClick={handleEbookAuth}
+              disabled={ebookLoading}
+              style={{
+                width:'100%', padding:'13px', borderRadius:50, border:'none',
+                background:t.gradient, color:'white', fontWeight:700, fontSize:'1rem',
+                cursor: ebookLoading ? 'wait' : 'pointer',
+                fontFamily:"'Nunito',sans-serif", marginTop:4,
+              }}
+            >
+              {ebookLoading ? 'Verificando...' : `${t.ebookBtnEmoji} Baixar PDF`}
+            </button>
+            <p style={{ textAlign:'center', fontSize:'0.7rem', color:'#c4b5c0', margin:'12px 0 0', fontStyle:'italic' }}>
+              Apenas quem criou a página pode baixar o e-book 🔒
+            </p>
           </div>
         </div>
       )}
@@ -768,10 +966,15 @@ const UserPage = ({ params }: PageProps) => {
         {/* ── CURIOSIDADES ── */}
         <CuriosidadesCard dataNascimento={userData.dataNascimento} horaNascimento={userData.horaNascimento} nomeBebe={userData.nomeBebe} t={t} />
 
-        {/* ── EBOOK ── */}
-        <EbookCard t={t} nomeBebe={userData.nomeBebe} />
+        {/* ── EBOOK (passa callback que abre o modal de auth) ── */}
+        <EbookCard t={t} nomeBebe={userData.nomeBebe} onDownload={() => setEbookModal(true)} />
 
-        {/* ── MENSAGEM ── */}
+        {/* ── POST-ITS ── */}
+        {slug && (
+          <PostitsSection slug={slug} nomeBebe={userData.nomeBebe} t={t} />
+        )}
+
+        {/* ── MENSAGEM DOS PAIS ── */}
         <div style={{ marginBottom:56 }}>
           <div style={{ textAlign:'center', marginBottom:20 }}>
             <span style={{ display:'inline-block', background:`linear-gradient(135deg,${t.light},#ede9fe)`, borderRadius:50, padding:'5px 18px', fontSize:'0.8rem', color:t.badgeColor, fontWeight:700 }}>💌 Mensagem de {userData.nomePais}</span>
@@ -792,7 +995,8 @@ const UserPage = ({ params }: PageProps) => {
             <div style={{ background:'white', borderRadius:22, padding:'32px', border:`1.5px solid ${t.border1}`, boxShadow:`0 4px 24px ${t.shadow}`, display:'inline-block' }}>
               <img src={qrCodeUrl} alt="QR Code" style={{ width:200, height:200, borderRadius:12, display:'block', margin:'0 auto 16px' }} />
               <p style={{ color:'#a08898', fontSize:'0.78rem', marginBottom:16 }}>Escaneie para acessar esta página</p>
-              <button onClick={downloadQR}
+              <button
+                onClick={downloadQR}
                 style={{ background:t.gradient, color:'white', border:'none', padding:'12px 32px', borderRadius:50, fontSize:'0.9rem', fontWeight:700, cursor:'pointer', boxShadow:`0 6px 20px ${t.shadow}`, fontFamily:"'Nunito',sans-serif", transition:'transform 0.2s' }}
                 onMouseEnter={e => { e.currentTarget.style.transform='translateY(-2px)'; }}
                 onMouseLeave={e => { e.currentTarget.style.transform='translateY(0)'; }}

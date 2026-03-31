@@ -389,7 +389,7 @@ const Home: React.FC = () => {
                   {/* Info */}
                   <div className="ebook-info">
                     <div style={{ display:'inline-flex', alignItems:'center', gap:6, background:'linear-gradient(135deg,#dbeafe,#fce4ef)', borderRadius:50, padding:'4px 14px', marginBottom:14 }}>
-                      <span style={{ fontSize:'0.72rem', color:'#3b82f6', fontWeight:700 }}>📖 E-book gratuito · 52 páginas · 9 capítulos</span>
+                      <span style={{ fontSize:'0.72rem', color:'#3b82f6', fontWeight:700 }}>📖 E-book gratuito · 10 capítulos</span>
                     </div>
                     <h3 className="pf" style={{ fontSize:'1.7rem', color:'#2d1b2e', lineHeight:1.2, margin:'0 0 10px' }}>
                       Meu Primeiro Ano
@@ -397,7 +397,7 @@ const Home: React.FC = () => {
                       <em style={{ color:'#e879a0', fontSize:'1.3rem' }}>— Guia para Mães de Primeira Viagem</em>
                     </h3>
                     <p style={{ fontSize:'0.92rem', color:'#6b5c6e', lineHeight:1.65, margin:'0 0 20px' }}>
-                      Do enxoval às primeiras vacinas, do sono à amamentação — tudo o que você precisa saber nos primeiros 12 meses, sem enrolação e com muito carinho.
+                      Do enxoval às primeiras vacinas, do sono à amamentação — tudo o que você precisa saber nos primeiros 12 meses, com muito carinho.
                     </p>
                     {/* Tags */}
                     <div className="eb-tags" style={{ display:'flex', flexWrap:'wrap', gap:8 }}>
