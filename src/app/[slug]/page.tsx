@@ -961,16 +961,22 @@ const UserPage = ({ params }: PageProps) => {
         )}
 
         {/* ── SIGNO ── */}
+        {userData.plano === 'sempre' && (
         <SignoCard dataNascimento={userData.dataNascimento} t={t} />
+        )}
 
         {/* ── CURIOSIDADES ── */}
+        {userData.plano === 'sempre' && (
         <CuriosidadesCard dataNascimento={userData.dataNascimento} horaNascimento={userData.horaNascimento} nomeBebe={userData.nomeBebe} t={t} />
+        )}
 
         {/* ── EBOOK (passa callback que abre o modal de auth) ── */}
+        {userData.plano === 'sempre' && (
         <EbookCard t={t} nomeBebe={userData.nomeBebe} onDownload={() => setEbookModal(true)} />
+        )}
 
         {/* ── POST-ITS ── */}
-        {slug && (
+        {slug && userData.plano === 'sempre' && (
           <PostitsSection slug={slug} nomeBebe={userData.nomeBebe} t={t} />
         )}
 

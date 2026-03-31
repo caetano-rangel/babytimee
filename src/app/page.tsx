@@ -178,10 +178,8 @@ const Home: React.FC = () => {
     fontFamily:"'Nunito',sans-serif", transition:'transform 0.3s, box-shadow 0.3s',
   };
 
-  // Badge "Mais escolhido": cores do próprio card metálico (escuro fosco com borda brilhante)
   const premiumBadgeBg = 'linear-gradient(135deg,#3d1060,#6b1a4a,#4a0a2e)';
   const premiumBadgeBorder = '1px solid rgba(232,121,160,0.45)';
-  // Botão Premium: violeta-roxo do site, harmonizando com as bordas metálicas do card
   const premiumBtnGradient = 'linear-gradient(135deg,#a855f7,#7c3aed,#6d28d9)';
   const premiumBtnShadow = '0 8px 28px rgba(124,58,237,0.5)';
 
@@ -191,6 +189,19 @@ const Home: React.FC = () => {
     { emoji:'🤱', titulo:'Amamentação & Nutrição',          sub:'Primeiros passos e dificuldades comuns' },
     { emoji:'🏠', titulo:'Adaptação & Rede de Apoio',       sub:'Rotina, ritual da noite e suporte' },
     { emoji:'💉', titulo:'Vacinas & Cuidados Médicos',      sub:'Calendário e sinais de alerta' },
+  ];
+
+  // Lista de funcionalidades — post-it adicionado
+  const features = [
+    { emoji:'📸', title:'Galeria de fotos',      desc:'Carrossel com as fotos mais lindas do seu bebê, com swipe e visualização em tela cheia.', color:'#dbeafe', badge:'#3b82f6' },
+    { emoji:'⏱️', title:'Contador de vida',      desc:'Contador em tempo real mostrando anos, meses, dias, horas, minutos e segundos de vida.', color:'#fce4ef', badge:'#e879a0' },
+    { emoji:'✨', title:'Signo do bebê',          desc:'Signo calculado automaticamente com símbolo, elemento, pedra e descrição personalizada.', color:'#ede9fe', badge:'#a78bfa' },
+    { emoji:'🧸', title:'Curiosidades',           desc:'Dados divertidos como batimentos cardíacos, fraldas trocadas e voltas ao redor do Sol.',  color:'#dcfce7', badge:'#22c55e' },
+    { emoji:'📌', title:'Recados (Post-its)',     desc:'Família e amigos podem deixar recadinhos coloridos na página — como post-its digitais guardados para sempre.', color:'#fef9c3', badge:'#ca8a04' },
+    { emoji:'💌', title:'Mensagem especial',      desc:'Uma mensagem dos pais eternizada na página com um layout elegante e emocional.',          color:'#fce4ef', badge:'#e879a0' },
+    { emoji:'📱', title:'QR Code exclusivo',      desc:'QR Code único para acessar e compartilhar a página com toda a família.',                   color:'#dbeafe', badge:'#3b82f6' },
+    { emoji:'🎵', title:'Música de fundo',        desc:'Uma trilha sonora especial que toca ao abrir a página. Disponível no plano Premium.',      color:'#fce4ef', badge:'#e879a0' },
+    { emoji:'💙💗', title:'Tema por sexo',        desc:'A página muda de cor automaticamente — azul para meninos e rosa para meninas.',            color:'#ede9fe', badge:'#a78bfa' },
   ];
 
   return (
@@ -300,16 +311,7 @@ const Home: React.FC = () => {
           </motion.div>
 
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))', gap:20 }}>
-            {[
-              { emoji:'📸', title:'Galeria de fotos', desc:'Carrossel com as fotos mais lindas do seu bebê, com swipe e visualização em tela cheia.', color:'#dbeafe', badge:'#3b82f6' },
-              { emoji:'⏱️', title:'Contador de vida', desc:'Contador em tempo real mostrando anos, meses, dias, horas, minutos e segundos de vida.', color:'#fce4ef', badge:'#e879a0' },
-              { emoji:'✨', title:'Signo do bebê', desc:'Signo calculado automaticamente com símbolo, elemento, pedra e descrição personalizada.', color:'#ede9fe', badge:'#a78bfa' },
-              { emoji:'🧸', title:'Curiosidades', desc:'Dados divertidos como batimentos cardíacos, fraldas trocadas e voltas ao redor do Sol.', color:'#dcfce7', badge:'#22c55e' },
-              { emoji:'💌', title:'Mensagem especial', desc:'Uma mensagem dos pais eternizada na página com um layout elegante e emocional.', color:'#fef9c3', badge:'#ca8a04' },
-              { emoji:'📱', title:'QR Code exclusivo', desc:'QR Code único para acessar e compartilhar a página com toda a família.', color:'#dbeafe', badge:'#3b82f6' },
-              { emoji:'🎵', title:'Música de fundo', desc:'Uma trilha sonora especial que toca ao abrir a página. Disponível no plano Premium.', color:'#fce4ef', badge:'#e879a0' },
-              { emoji:'💙💗', title:'Tema por sexo', desc:'A página muda de cor automaticamente — azul para meninos e rosa para meninas.', color:'#ede9fe', badge:'#a78bfa' },
-            ].map(({ emoji, title, desc, color, badge }, i) => (
+            {features.map(({ emoji, title, desc, color }, i) => (
               <motion.div key={i} variants={fadeUp(i * 0.05)} initial="hidden" whileInView="show" viewport={{ once:true }}
                 whileHover={{ y:-4, transition:{ duration:0.2 } }}
                 style={{ background:'white', borderRadius:20, padding:'24px 20px', border:'1.5px solid #f0eeff', boxShadow:'0 4px 20px rgba(167,139,250,0.08)', display:'flex', flexDirection:'column', gap:12 }}
@@ -351,13 +353,11 @@ const Home: React.FC = () => {
           }
         `}</style>
 
-        {/* Blobs decorativos — azul e rosa suaves como no hero */}
         <div style={{ position:'absolute', top:-60, right:-60, width:320, height:320, background:'radial-gradient(circle,rgba(191,219,254,0.28),transparent 70%)', borderRadius:'50%', pointerEvents:'none' }} />
         <div style={{ position:'absolute', bottom:-60, left:-40, width:260, height:260, background:'radial-gradient(circle,rgba(249,168,201,0.22),transparent 70%)', borderRadius:'50%', pointerEvents:'none' }} />
 
         <div style={{ maxWidth:900, margin:'0 auto', position:'relative', zIndex:1 }}>
 
-          {/* Header da seção */}
           <motion.div variants={fadeUp(0)} initial="hidden" whileInView="show" viewport={{ once:true }} style={{ textAlign:'center', marginBottom:56 }}>
             <span style={{ display:'inline-block', background:'linear-gradient(135deg,#dbeafe,#fce4ef)', borderRadius:50, padding:'5px 18px', fontSize:'0.82rem', color:'#3b82f6', fontWeight:700, marginBottom:14 }}>
               📖 Bônus exclusivo Premium
@@ -371,22 +371,16 @@ const Home: React.FC = () => {
             </p>
           </motion.div>
 
-          {/* Card principal do ebook */}
           <motion.div variants={fadeUp(0.1)} initial="hidden" whileInView="show" viewport={{ once:true }}>
             <div style={{ background:'white', borderRadius:28, border:'1.5px solid #ddd8f0', boxShadow:'0 12px 48px rgba(120,100,200,0.1)', overflow:'hidden' }}>
 
-              {/* Topo colorido */}
               <div className="ebook-top">
                 <div style={{ position:'absolute', top:-30, right:-30, width:180, height:180, background:'radial-gradient(circle,rgba(191,219,254,0.2),transparent 70%)', borderRadius:'50%', pointerEvents:'none' }} />
 
                 <div className="ebook-top-inner">
-
-                  {/* Capa do livro */}
                   <div className="ebook-cover-wrap">
                     <EbookCover size="lg" />
                   </div>
-
-                  {/* Info */}
                   <div className="ebook-info">
                     <div style={{ display:'inline-flex', alignItems:'center', gap:6, background:'linear-gradient(135deg,#dbeafe,#fce4ef)', borderRadius:50, padding:'4px 14px', marginBottom:14 }}>
                       <span style={{ fontSize:'0.72rem', color:'#3b82f6', fontWeight:700 }}>📖 E-book gratuito · 10 capítulos</span>
@@ -399,7 +393,6 @@ const Home: React.FC = () => {
                     <p style={{ fontSize:'0.92rem', color:'#6b5c6e', lineHeight:1.65, margin:'0 0 20px' }}>
                       Do enxoval às primeiras vacinas, do sono à amamentação — tudo o que você precisa saber nos primeiros 12 meses, com muito carinho.
                     </p>
-                    {/* Tags */}
                     <div className="eb-tags" style={{ display:'flex', flexWrap:'wrap', gap:8 }}>
                       {['🛍️ Enxoval', '🌙 Sono', '🤱 Amamentação', '💉 Vacinas', '❤️ Autocuidado'].map(tag => (
                         <span key={tag} style={{ background:'linear-gradient(135deg,#dbeafe60,#fce4ef60)', border:'1px solid #e0eeff', borderRadius:50, padding:'4px 12px', fontSize:'0.75rem', color:'#3b82f6', fontWeight:600 }}>{tag}</span>
@@ -409,7 +402,6 @@ const Home: React.FC = () => {
                 </div>
               </div>
 
-              {/* Capítulos */}
               <div className="ebook-body">
                 <p style={{ fontSize:'0.72rem', color:'#a08898', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', margin:'0 0 16px' }}>
                   O que você vai encontrar
@@ -435,7 +427,6 @@ const Home: React.FC = () => {
                   ))}
                 </div>
 
-                {/* CTA inferior */}
                 <div className="ebook-cta-row">
                   <div>
                     <p style={{ fontWeight:700, color:'#2d1b2e', fontSize:'1rem', margin:'0 0 3px' }}>
@@ -483,6 +474,7 @@ const Home: React.FC = () => {
                   <li style={{ fontSize:'0.93rem', display:'flex', alignItems:'center', gap:8, color:'#374151' }}><span style={{ color:'#4ade80' }}>✓</span> 1 ano de acesso</li>
                   <li style={{ fontSize:'0.93rem', display:'flex', alignItems:'center', gap:8, color:'#374151' }}><span style={{ color:'#4ade80' }}>✓</span> Até 10 fotos</li>
                   <li style={{ fontSize:'0.93rem', display:'flex', alignItems:'center', gap:8, color:'#374151' }}><span style={{ color:'#4ade80' }}>✓</span> Contador de vida</li>
+                  <li style={{ fontSize:'0.93rem', display:'flex', alignItems:'center', gap:8, color:'#374151' }}><span style={{ color:'#4ade80' }}>✓</span> Recados (Post-its)</li>
                   <li style={{ fontSize:'0.93rem', display:'flex', alignItems:'center', gap:8, color:'#9ca3af' }}><span style={{ color:'#f87171' }}>✕</span> Sem música de fundo</li>
                   <li style={{ fontSize:'0.93rem', display:'flex', alignItems:'center', gap:8, color:'#9ca3af' }}><span style={{ color:'#f87171' }}>✕</span> Sem Signo</li>
                   <li style={{ fontSize:'0.93rem', display:'flex', alignItems:'center', gap:8, color:'#9ca3af' }}><span style={{ color:'#f87171' }}>✕</span> Sem Curiosidades</li>
@@ -531,6 +523,7 @@ const Home: React.FC = () => {
                     'Música de fundo',
                     'Signo e descrição',
                     'Curiosidades divertidas',
+                    'Recados (Post-its)',
                     'QR Code de alta resolução',
                   ].map(f => (
                     <li key={f} style={{ fontSize:'0.93rem', display:'flex', alignItems:'center', gap:8, color:'rgba(255,255,255,0.85)' }}>
@@ -547,7 +540,6 @@ const Home: React.FC = () => {
                   </li>
                 </ul>
 
-                {/* Botão Premium — violeta-roxo harmonizando com as bordas metálicas do card */}
                 <button
                   onClick={go('/form?sexo=menina')}
                   className="btn-gold"
