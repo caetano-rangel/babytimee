@@ -301,8 +301,49 @@ const Home: React.FC = () => {
         </div>
       </section>
 
+      {/* ── VER EXEMPLO ── */}
+      <section style={{ padding:'54px 24px', background:'white' }}>
+        <div style={{ maxWidth:600, margin:'0 auto' }}>
+          <motion.div
+            variants={fadeUp(0)} initial="hidden" whileInView="show" viewport={{ once:true }}
+            style={{
+              background:'linear-gradient(195deg,#f0f7ff,#fce4ef)',
+              borderRadius:24, padding:'40px 32px', textAlign:'center',
+              border:'1.5px solid #e0eeff',
+              boxShadow:'0 8px 32px rgba(191,219,254,0.2)',
+            }}
+          >
+            <div style={{ fontSize:44, marginBottom:14 }}>👀</div>
+            <h2 className="pf" style={{ fontSize:'1.7rem', fontWeight:700, color:'#2d1b2e', marginBottom:10 }}>
+              Curiosa? Veja um exemplo real!
+            </h2>
+            <p style={{ fontSize:'0.95rem', color:'#6b5c6e', lineHeight:1.7, marginBottom:28, maxWidth:380, margin:'0 auto 28px' }}>
+              Acesse a página da <strong style={{ color:'#e879a0' }}>Sofia</strong> e veja exatamente como vai ficar a página do seu bebê.
+            </p>
+            <a
+              href="https://www.babytimee.com/sofia-123"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-pink"
+              style={{
+                display:'inline-block',
+                background:'linear-gradient(135deg,#f9a8c9,#e879a0,#d1598c)',
+                color:'white', padding:'14px 36px', borderRadius:50,
+                fontSize:'1rem', fontWeight:700, textDecoration:'none',
+                boxShadow:'0 8px 24px rgba(232,121,160,0.4)',
+                fontFamily:"'Nunito',sans-serif",
+                transition:'transform 0.3s, box-shadow 0.3s',
+              }}
+            >
+              Ver exemplo da Sofia 💗
+            </a>
+            <p style={{ marginTop:14, fontSize:'0.78rem', color:'#a08898' }}>Abre em uma nova aba</p>
+          </motion.div>
+        </div>
+      </section>
+
       {/* ── FUNCIONALIDADES ── */}
-      <section style={{ padding:'80px 24px', background:'white' }}>
+      <section style={{ padding:'60px 24px', background:'white' }}>
         <div style={{ maxWidth:880, margin:'0 auto' }}>
           <motion.div variants={fadeUp(0)} initial="hidden" whileInView="show" viewport={{ once:true }} style={{ textAlign:'center', marginBottom:48 }}>
             <span style={{ display:'inline-block', background:'linear-gradient(135deg,#dbeafe,#fce4ef)', borderRadius:50, padding:'5px 18px', fontSize:'0.82rem', color:'#3b82f6', fontWeight:700, marginBottom:14 }}>✨ O que está incluído</span>
